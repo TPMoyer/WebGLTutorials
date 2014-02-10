@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--  © 2013 Thomas P Moyer  -->
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div> 
+<ul>
+	<li class="toclevel-1 tocsection-1"><span class="tocnumber">1</span> <span class="toctext">Preamble</span>
+	<ul>
+		<li class="toclevel-2 tocsection-2"><a href="#welcome"><span class="tocnumber">1.1</span> <span class="toctext">Welcome</span></a></li>
+		<li class="toclevel-2 tocsection-4"><a href="#aQuickWarning"><span class="tocnumber">1.2</span> <span class="toctext">a Quick Warning</span></a></li>
+		<li class="toclevel-2 tocsection-5"><a href="#anOverView"><span class="tocnumber">1.3</span> <span class="toctext">an OverView</span></a></li>
+	</ul>
+	<li class="toclevel-1 tocsection-5"><span class="tocnumber">2</span> <span class="toctext">The Code</span>
+	<ul>
+		<li class="toclevel-2 tocsection-6"><a href="#theShaders"><span class="tocnumber">2.1</span> <span class="toctext">The Shaders</span></a></li>
+		<li class="toclevel-2 tocsection-7"><a href="#theJavaScript"><span class="tocnumber">2.2</span> <span class="toctext">The JavaScript</span></a></li>
+		<li class="toclevel-2 tocsection-7"><a href="#overHead"><span class="tocnumber">2.2</span> <span class="toctext">Overhead</span></a></li>
+		<li class="toclevel-2 tocsection-8"><a href="#tutorial01"><span class="tocnumber">2.3</span> <span class="toctext">tutorial01</span></a></li>
+		<li><ul>
+			<li class="toclevel-2 tocsection-6"><a href="#coOrdinates"><span class="tocnumber">2.3.1</span> <span class="toctext">co-Ordinates</span></a></li>
+			<li class="toclevel-2 tocsection-8"><a href="#userInterface"><span class="tocnumber">2.3.2</span> <span class="toctext">The User Interface</span></a></li>
+	</ul></li>
+	</ul>
+	<li class="toclevel-1 tocsection-9"><a href="#summary"><span class="tocnumber">3</span> <span class="toctext">Summary</span></a></li>
+<!---->
+  	<li class="toclevel-1 tocsection-9"><a href="#editPoint"><span class="tocnumber">3</span> <span class="toctext">Edit Point</span></a></li>
+<!-- 	-->
+</ul>
+</td></tr>
+</table>
+<a id="welcome"></a> 
+<h3> Welcome</h3>
+<p>Welcome to the second in my series of WebGL Tutorials.  These tutorials are based on the well known 
+<a href="http://learningwebgl.com/blog/?page_id=1217"> Learning WebGL </a> series, with this second tutorial being based on the WebGL Lesson2.
+It shows you how to add color to the shapes we learned to draw on a web page in tutorial01.  This and the following tutorials will go over only
+the things which are new to that tutorial.  Color is the thing added in this tutorial 
+</p>
+<a id="aQuickWarning4"></a>
+<h3> a quick warning</h3>   	
+<p>These tutorials are a best match with people who have a reasonable amount of programming experience, but no prior exposure to computer
+graphics is required.  The goal is to get you up and running a working 3D interactive web page as quickly as possible, with a good understanding
+of what is going on.  Writing these tutorials is how I'm learning WebGL myself, so there may well be (and probably are) errors; use at your own risk.
+ However, I&#39;ll be fixing bugs and correcting misconceptions when I hear about them, so if you see anything wrong, please let me know in the comments. 
+</p>
+<a id="anOverView"></a><h3> an OverView</h3>   	
+<p>The code from webGLTutirial01 is mutated to add color to each vertex.
+<br>The nice gradual transitions from one color to another is done by entirely by webGL, and is the default behavior .  In the nomenclature of 
+webGL, each vertex will now have two attributes: position and color.
+</p>
+<a id="theShaders"></a><h3>The Shaders</h3>
+<b>webGLTutorial.jsp... &nbsp; &nbsp; vertex-shader1</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_000.png" alt="IMAGE FAIL: 02_00">
+<p>First impression of this shader might be that it looks rather like the previous shader, rather simple.  True.
+<br>Line 21 adds our second attribute type variable: aRGBA &nbsp; &nbsp; the leading a is for attribute (something that can change for each vertex)
+RGB are Red Green Blue, and A is for the Additoinal Attribute.
+<br>Line 26 is new and is our first exposure to a varying variable.  These are the way extra data is shared between the vertex shader and revieved by
+the fragment shader.  There MUST be an identical declare in the fragment shader.   the name: vColor is short for vertex Color.  It is a vec4 for the
+same reason aRGBA is a vec4 (as explained in tutorial01).  
+<br>Line 31 "deals" with the colors,  pretty simply, it hands our attribute off the the varying variable.
+<br>Done
+</p> 
+<b>webGLTutorial.jsp... &nbsp; &nbsp; fragment-shader1</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_001.png" alt="IMAGE FAIL: 02_01">
+<p>Also not much different from our tutorial01 fragment-shader.
+<br>Line 29 is our catcher for the line 26 pitcher from the vertex-shader.
+<br>Line 42 is where the real work gets done.  We just assign the colors which come over with the several vertices in the fragment to pixels in the
+fragment.  Look up at the triangle and the lines where the colors are blended.   All that is done under the covers by the magic provided in the
+webGL context.  All we have to do is that one little assign in line 42.
+<br>Done 
+<a id="theJavaScript"></a><h3>The JavaScript</h3>
+<p>The order of the functions in the webGLTutorial02.js has again been left in the same order as their execution order.   The .jsp onload 
+starts us out in webGLStart02() which is identical to it's webGLTutorial01 version.  
+<br>Second is the customizeGL02(), which has only an additional else clause on the cullface checker, to handle the case where I 
+forgot to have an id of the right name.  When I copied things over to make the second tutorial, I botched it somehow.   First thing to check is
+setCullface vs setCullFace.   Anyway, javascript did, as javascript will.  It just halted.  Firefox with firebug
+saved my sanity by letting me see where the halt was (Download firefox, and do your debug/development programmig against mozilla first) 
+When you get firefox visible, set it to the console tab and then open your web page.   The setCullFace was addes to handle this fail gracefully.
+</p>   
+<b>webGLTutorial02.js... &nbsp; &nbsp; initShaders02</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_003.png" alt="IMAGE FAIL: 02_03">
+<p>This is unchanged except that in the final block, Lines 64 thru 69, we need to add the buffer location and array enablers for the new RGBA color
+attribute.
+ </p>
+<b>webGLTutorial02.js... &nbsp; &nbsp; initBuffers02()</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_004.png" alt="IMAGE FAIL: 02_04"> 
+<p>The name of the javascript varialble and the buffer we are settting has expanded to be the position xyz plus the color rgba. 
+<br>Each line of the four points we are setting for the two lines,  the third     of which will also be the point), with the cartesian coordinates, 
+followed by the color Red, Green, Blue, Attribute-1.0.
+<br>the first line has it's beginnign and end colors set to be the same color, and the second line has the bottom red (this is the veretx we will nab
+to be our point), and the second line end (the top) as green.
+</p><p>The most interesting thing here is that the final three lines did not change at all.
+There are no refernces to the length of the variables which need to be sent to the graphics engine.
+</p>
+<b>webGLTutorial02.js... &nbsp; &nbsp; initBuffers02()</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_007.png" alt="IMAGE FAIL: 02_07">
+<p>Pretty much the same thing for the 4 vertices which will become the 3 lines, and the first three will be the triangle.  Added the numItems
+"tack-on" to the buffer.
+<b>webGLTutorial02.js... &nbsp; &nbsp; initBuffers02()</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_008.png" alt="IMAGE FAIL: 02_08">
+<p>The squareXYZRGBA has all of the 4 points for the two triangles with the same color. </p>
+<P>and on into the drawScene function
+<b>webGLTutorial02.js... &nbsp; &nbsp; drawScene02()</b><br><img src="images/WebGLTutorial02/WebGLTutorial02_009.png" alt="IMAGE FAIL: 02_09">
+<p>In addition to the now familiar additional line for the aRGBA attribute, there is one trickey bit... the constants in these lines.   Notice that
+the aXYZ gets 3 floats per XYZ, and that aRGBA gets 4.  Notice the second to the last argument on the vertexAttribPointer, 28 is the stride.  That is
+because the 7 floats per vertex (3 for position plus 4 for color) times 4 bytes per Float32Array member 7*4=28 bytes gets you to the next vertex. 
+<br>We had set up our vertices with XYZ first (purely arbitrary choice), but after haveing done so, we need to put the offsets to match.  The XYZ
+is right at the start of the vertex, so the offset=0.  The color starts after 3 float32's, (4 bytes each) so the offset for the RGBA is 12.
+</p><p>Done
+  <a id="editPoint"></a> 
+</p>
+<h3>The User Interface</h3><a id="userInterface"></a>
+<p>The user interface is unchanged from WebGLTutorial01.
+<a id="summary"></a><h3> Summary</h3>
+<p>Adding color was a relatively small modification.
+</body>
+</html>

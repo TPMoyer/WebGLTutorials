@@ -1,0 +1,204 @@
+/* basic style elements */
+html {
+	margin: 0;
+	padding: 0;
+	font-size: 100%;
+}
+body { 
+	font-family: "Times New Roman", Arial, Times, serif;
+	line-height: 1.2;
+	margin-top:0px;
+	margin-bottom:100px;
+	margin-right:50px;
+	margin-left:50px; 
+	padding: 0;
+}
+#breadcrumbs {
+	font-size: 0.8em;
+	padding: 0.3em 0 0 0;
+	margin-top:-.3em;
+}
+#header {
+	font-size: 1.5em;
+	margin-top:-.5em;
+	margin-left:-70px;
+	font-weight:bold;
+}
+p { 
+	margin-top: 0; 
+	text-indent:40px;
+	/*	text-align: justify; */
+}
+h3 { 
+	font: italic normal 1.4em georgia, sans-serif;
+	letter-spacing: 1px; 
+	margin-bottom: 0; 
+	color: #7D775C;
+}
+td {font-weight:normal; color: black; font-size:1.2em; padding:5px; }
+td.name {font-weight:bold; color: black; font-size:1.6em; padding:5px;}
+.hide {display:none;}
+.show {display:block;}
+
+toc, .toc, .mw-warning {
+border: 1px solid #aaa;
+background-color: #f9f9f9;
+padding: 5px;
+font-size: 95%;
+}
+/************ used by all the tutorials **************************/
+.xyzpry{font-weight:bold;}
+
+/************  styles for tutorial05 gui elements ****************/
+#loadingtext {
+	position:absolute;
+	top:300px;
+	left:200px;
+	font-size:2em;
+	color: white;
+}
+#tutorial05-canvas0:focus {
+outline: yellow solid 3px;
+}
+#tutorial05-canvas1:focus {
+outline: yellow solid 3px;
+}
+
+#tutorial06-canvas0:focus {
+outline: yellow solid 3px;
+}
+#tutorial06-canvas1:focus {
+outline: yellow solid 3px;
+}
+#tutorial07-canvas0:focus {
+outline: yellow solid 3px;
+}
+#tutorial07-canvas1:focus {
+outline: yellow solid 3px;
+}
+#tutorial08-canvas0:focus {
+outline: yellow solid 3px;
+}
+#tutorial08-canvas1:focus {
+outline: yellow solid 3px;
+}
+#tutorial05Tabs{
+	position: relative;
+	left:-40px;
+	top:500px;
+	width: 1065px;
+}
+#tutorial06Tabs{
+	position: relative;
+	left:-40px;
+	top:500px;
+	width: 1065px;
+}
+#tutorial07Tabs{
+	position: relative;
+	left:-40px;
+	top:500px;
+	width: 1065px;
+}
+#tutorial08Tabs{
+	position: relative;
+	left:-40px;
+	top:500px;
+	width: 1065px;
+}
+#directionalLightXYZSlider {
+  width: 500px;
+  height: 6px;
+  margin: 5px;
+  left:35px;
+  top:-130px;
+  background: #BBBBBB;
+  position: relative;
+}
+
+#rotationSpeedSlider {
+  width: 500px;
+  height: 6px;
+  margin: 5px;
+  left:35px;
+  top:-130px;
+  background: #BBBBBB;
+  position: relative;
+}
+#pointLightXYZSlider {
+  width: 500px;
+  height: 6px;
+  margin: 5px;
+  left:35px;
+  top:-130px;
+  background: #BBBBBB;
+  position: relative;
+}
+#shininessSlider1 {
+  width: 100px;
+  height: 6px;
+  margin: 5px;
+  left:-25px;
+  top:5px;
+  background: #BBBBBB;
+  position: relative;
+}
+#shininessSlider2 {
+  width: 100px;
+  height: 6px;
+  margin: 5px;
+  left:-25px;
+  top:5px;
+  background: #BBBBBB;
+  position: relative;
+}
+.ui-slider-handle {
+  width: 8px;
+  height: 14px;
+  position: absolute;
+  top: -4px;
+  background: #478AFF;
+  border: solid 1px black;
+}
+
+
+
+
+/******************* legacy **********************/
+.pseudoLink             {color:blue;text-decoration:underline;cursor:pointer}
+.timePeriod             {padding-right: 10px;}
+.errorText              {color: red;}
+.resultText             {color: blue;}
+.divToggler             {cursor:pointer;color:blue;}
+.divTogglerBody         {cursor:default;color:black;}
+
+#resultsTable td         {font-family:Arial Narrow;}
+#resultsTable td.claimMemo   {min-width:300px;}
+.formTable               {border:1px solid black; border-collapse:collapse;}
+.formTableTitle td         {font-weight:bold;border:1px solid black;}
+.columnGroup             {font-weight:bold}
+#dateInputs               {padding-left:2em}
+.errorText   {color:red;}
+
+
+
+/*	
+a:link { 
+	font-weight: bold; 
+	text-decoration: none; 
+	color: #B7A5DF;
+	}
+a:visited { 
+	font-weight: bold; 
+	text-decoration: none; 
+	color: #D4CDDC;
+	}
+a:visited { 
+	font-weight: bold; 
+	text-decoration: none; 
+}
+	li {margin: 2px; position: relative; padding: 4px 0; cursor: pointer; float: left;  list-style: none;}
+		span.ui-icon {float: left; margin: 0 4px;}
+		span.text {float: left; width: 180px;}
+	
+*/

@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html> 
+<!--  © 2013 Thomas P Moyer  -->
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <LINK REL=StyleSheet HREF="css/webGLTutorials.css"  TYPE="text/css" MEDIA=screen>  
+    <title>WebGLTutorials</title>
+  </head>
+<body style="overflow: auto; overflow-x: hidden;"> 
+<p id="breadcrumbs"><a href="WebGLTutorials">WebGLTutorials</a> -&gt; value</p>
+<h2>A full working set of tools, and Why did I make these tutorials</h2>
+<p>This set of WebGL tutorials is intended to get you up and programming your own 3D interactive web pages as quickly as possible.
+The tutorials are mostly javascript, moderate use of html in JSP (Java Server Pages), with some tie-in to Java.  They use the eclipse
+ development environment.
+</p>
+<p> 
+   The WebGLTutorials owe much to the <a href="http://learningwebgl.com/blog/?page_id=1217">WebGLLessons</a> from which they are forked.   This series of tutorials is my first webGL project. &nbsp; 
+I had previously had several 3D ineractive graphics projects
+using legacy OpenGL (before the introduction of shaders) programming in C++.   Part of my path toward 3D interactivity was a book
+by LeMothe... The black art of 3D game Programming.  Therin was an attitude, some portion of which I attempt to share with you.  Most 
+recently I joined a small team writing a web interactive database application, using java and a modest amount of javaScript. 
+My own style of picking up
+new coding skills is to take working code and mutate it towards my own ends.   This set of tutorials will hopefully be useful as the
+beginning state for for your projects.
+</p>
+<p>One choice I refused to make was the html server to use in doing my debugging and deployment.   Some of my clients require the additional
+perceived security of a local html server such as TomCat, running behind a firewall.   I also see the advantages of a cloud based deployment
+system such as the GAE (Google App Engine).   I was able to set things up so that a single eclipse project could run under both tomcat and GAE.  Well, 
+almost.   GAE uses a datanucleus system to allow storage of information, but tomcat has no such capability.   These tutorials do not use the
+GAE datanucleus functionality, so the datanucleus code can be commented out.   With this modification to a project both GAE and Tomcat 
+compile and run localy for debugging, and either can be used for deploy.     
+</p>
+<p>
+Among the difficulties faced along the way toward becoming functional with javascript, I was much frustrated by the limited debug capability.
+The most frustrating behavior was that when it hits some errors, it just stops.  No complaints.  Nothing.  Just stops.    
+I developed the tactic of using jquery AJAX to allow javascript to log (by passing character strings to the server).   My usual 
+development platform is firefox, because it has firebug.   I prefer Chrome for day to day usage, but without the feedback provided by firebug, 
+not for debugging/development.
+</p>
+<h2>The tools</h2>
+<p> Most example code sets have gone the route of providing their content in a minimalist fashion, such as providing their code in a single .html file. &nbsp;
+ I chose to go the other extreem, sharing an entire eclipse project package, because the upside benifits seems large compared to the downside.
+ </p>
+The upside as I see it
+<ul> 
+    <li> Organizes and separates the programming functionality into locations which are compartmentalized
+    <li> provides the integration of different functional blocks of code in a working set
+    <li> shows one way in which multiple web pages can be organized into an interconnected suite of pages
+    <li> allows code reuse among several tutorial pages
+    <li> in order to be able show some of the aspects of WebGL, interactivity was necessary.  This in turn
+    was best accomplished by having jquery UI functions.
+    <li> being able to log diagnostics from within javascript needed server side code, facilitated by jquery ajax.
+    <li> My having patched these several things together seemed a good shot at folks being able to use them. 
+</ul>    
+ The dowside as I see it.
+<ul> 
+     <li> potential for the install process to go horribly wrong, and for folks to be unable to get it working
+</ul>
+<p>Download all the packages in the table below:<br>The versions listed are the most recent stable released versions of the products. 
+I like 7Zip.exe for unpacking the zipped packages: it leaves the original zipped version, and makes a copy &nbsp; If the links
+provided should fail, remember always that &nbsp; &nbsp; &quot;Google is your friend&quot;.
+</p> 
+<table border="1" style="background-color:yellow;border:2px;width:100%;border-collapse:collapse;">
+<thead>
+<tr>
+<td colspan="5">Core</td> 
+</tr>
+<tr>
+<th>Name</th>
+<th>Location</th>
+<th>What it is</th>
+<th>suggested flavor</th>
+<th>clue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="name">Java</td>
+<td><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">oracle.com</a></td>
+<td>programming language</td>
+<td>Java SE (Standard Edition) JDK (Java Development Kit) 7</td>
+<td>Java SE... Downloads... JDK Download... version for your OS &amp; bit Length</td>
+</tr>
+<tr>
+<td class="name">Tomcat</td>
+<td><a href="http://tomcat.apache.org/">tomcat.apache.org</a></td>
+<td>html server</td>
+<td>most recent release version</td>
+<td>downloads... Tomcat 7... Binary Distributions... core...verserion for your OS &amp; bit Length</td>
+</tr>
+<tr>
+<td class="name">Homepace</td>
+<td><a href="https://github.com/TPMoyer/WebGLTutorials">Github</a></td>
+<td>Eclipse Workspace for WebGLTutorials</td>
+<td>latest version</td>
+<td>n/a </td>
+</tr>
+<tr>
+<td class="name">Eclipse</td>
+<td><a href="http://www.eclipse.org">eclipse.org</a></td>
+<td>IDE (Integrated Development Environment)</td>
+<td>Eclipse IDE for Java EE Developers</td>
+<td>yellow rectangle toward upper right, big bold <b>Download Eclipse</b></td>
+</tr>
+</tbody>
+</table>
+<br><br>
+<table border="1" style="background-color:yellow;border:2px;width:100%;border-collapse:collapse;">
+<thead>
+<tr>
+<td colspan="5">Full Set of building blocks if you want to build your own</td> 
+</tr>
+<tr>
+<th>Name</th>
+<th>Location</th>
+<th>What it is</th>
+<th>suggested flavor</th>
+<th>clue</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="name">Java</td>
+<td><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">oracle.com</a></td>
+<td>programming language</td>
+<td>Java SE (Standard Edition) JDK (Java Development Kit) 7</td>
+<td>Java SE... Downloads... JDK Download... version for your OS &amp; bit Length</td>
+</tr>
+<tr>
+<td class="name">Tomcat</td>
+<td><a href="http://tomcat.apache.org/">tomcat.apache.org</a></td>
+<td>html server</td>
+<td>most recent release version</td>
+<td>downloads... Tomcat 7... Binary Distributions... core...verserion for your OS &amp; bit Length</td>
+</tr>
+<tr>
+<td class="name">Eclipse</td>
+<td><a href="http://www.eclipse.org">eclipse.org</a></td>
+<td>IDE (Integrated Development Environment)</td>
+<td>Eclipse IDE for Java EE Developers</td>
+<td>yellow rectangle toward upper right, big bold <b>Download Eclipse</b></td>
+</tr>
+<tr>
+<td class="name">log4J</td>
+<td><a href="http://logging.apache.org/log4j/1.2/download.html">tomcat Log4J</a></td>
+<td>debugging logger</td>
+<td>latest release version</td>
+<td>version 1.2.17 tar.gz or .zip </td>
+</tr>
+<tr>
+<td class="name">JSTL</td>
+<td><a href="http://jstl.java.net/">JSTL.java.net</a>
+<td>allows use of &quot;&lt;c&#58;out&quot;    in .jsp files</td>
+<td>javax.servlet.jsp.jstl-api-1.2.1.jar</td>
+<td>http://jstl.java.net/...   download JSTL...  JSTL API... javax.servlet.jsp.jstl-api-1.2.1.jar</td>
+</tr>
+</tbody>
+</table>
+<h3>Java:</h3><p>My procedure is to go in and remove all currently installed versions of java first. &nbsp; I and several of my friends have 
+gotten into disfunction from having multiple copies of multiple versions of java on our computers.  Eclipse points to 
+a java environment, and by un-installing all the versions you no longer need you will avoid pointing to one of the downlevel
+javas.   On my windows systems uninstalling a program is
+<br>&nbsp; &nbsp; &nbsp; &nbsp;control panel...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; programs and features...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; click on publisher...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;look under two publishers (IBM, and more likely oracle) for anything JAVA
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; click on the icon to the left of the java program name
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; wait for it to finish uninstalling  
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; look to see if there are any other java's installed, if there are... click on the next one
+</p>
+<h3>Tomcat:</h3>
+7-Zip extract file to any convenient location.  I chose c:\program files  which resulted in 7Zip creating c:\program files\apache-tomcat-7.0.35
+<h3>Homespace:</h3>
+7-Zip extract file to any convenient location.  I chose c:\  which resulted in 7-Zip creating c:\homespace
+<h3>eclipse:</h3>
+7-Zip extract file to any convenient location.  I chose c:\  which resulted in 7-Zip creating c:\eclipse<br>
+<br>After eclipse is unzipped you'll want to execute the eclipse.exe.  With this first execution, it will prompt you to select a workspace.
+You should enter &nbsp; &nbsp;  c:\homespace  &nbsp; &nbsp; and you probably want to click the "use this as the default"  checkbox.<br>
+<img src="images/WebGLTutorial00/Eclipse_Workspace_Launcher.png" alt="IMAGE FAIL: location 2B  c:\homespace and DO YES check the checkbox"><br><br>
+<h3>Getting a tomcat server running under eclipse</h3>Down in the lower right corner of the eclipse app... click on the "new server wizard" link in 
+<br><img src="images/WebGLTutorial00/no_servers_available.png" alt="IMAGE FAIL: shold be toward the lower right"><br><br>
+and you will get the New Server dialog with one of two outcomes:  Success is if your tomct directroy is identical to the tomcat directory on the computer which created the homespace. Success looks like
+<br><img src="images/WebGLTutorial00/ServerIsThere.png" alt="IMAGE FAIL: server name box has somthing in the entry field"><br><br>
+Faiure is when your tomcat directory is different from the tomcat directory on the computer which created the homespace.  Failure looks like:
+<br><img src="images/WebGLTutorial00/ServerNotThere.png" alt="IMAGE FAIL: server name box has nothing in it and is grey"><br><br>
+If you have success skip ahead to <a HREF="#TomcatLocationSuccess">Add Package To Server</a>
+<br>If instead, you have failure you need to close the New Server dialog and go to the eclipse main menu bar.    
+<br>&nbsp; &nbsp; &nbsp; &nbsp;Window...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Preferences...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Server...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Runtime Environment
+<br>The Server Runtime Environment dialog will show the link to the tomcat directory on the computer which created the homespace.
+<br><img src="images/WebGLTutorial00/ServerRuntimeEnvironments.png" alt="IMAGE FAIL: "><br><br>
+You need to highlight it.
+<br><img src="images/WebGLTutorial00/ServerRuntimeEnvironmentsHighlighted.png" alt="IMAGE FAIL: "><br><br>
+and click remove.
+<br><img src="images/WebGLTutorial00/ServerRuntimeEnvironmentsRemoved.png" alt="IMAGE FAIL: "><br><br>
+then click Add which opens the New Server Runtime Environment dialog (with the wrong choices)
+<br><img src="images/WebGLTutorial00/newServerRuntimeEnvironmentWrongChoices.png" alt="IMAGE FAIL: "><br><br>
+click on Apache Tomcat v7.0 and click the   "Create new local server"
+<br> click FINISH to open a different dialog, which is also (somewhat irksomely) named New Server Runtime Environment
+<br><img src="images/WebGLTutorial00/newServerRuntimeEnvironmentRightChoices.png" alt="IMAGE FAIL: "><br><br>
+clink on the the Browse button and in the resulting "Browse for Folder" dialog and navigate to your tomcat directory. Highlight it and click ok
+<br><img src="images/WebGLTutorial00/newServerRuntimeEnvironmentPreJRE.png" alt="IMAGE FAIL: "><br><br>
+click on the installed JRE's button to open one of the many different eclipse "Preferences" dialogs.
+<br>Use the ADD button if necessary (this will not be necessary if you followed my suggestion to purge other Java JRE's and Java SDK's prior to the install of the current version SDK).
+<br>It is <B>vital</B>, that you have the checkbox next to the JDK clicked.
+<br>Click OK
+<br><img src="images/WebGLTutorial00/InstalledJREs.png" alt="IMAGE FAIL: "><br><br>
+click the pulldown just to the left of the Installed JRE's   button, and select the jdk
+<br><img src="images/WebGLTutorial00/newServerRuntimeEnvironmentPostJRE.png" alt="IMAGE FAIL: "><br><br>
+<A NAME="TomcatLocationSuccess">Adding WegGLTutorials to the packages served:</A>
+<br>Go to the servers tab (probably in the lower right corner) and RIGHT mouse button click on the Tomcat v7.0 ... The dark blue highlighted line 
+<br><img src="images/WebGLTutorial00/ServersPreAdd.png" alt="IMAGE FAIL: "><br><br>
+click on  "add and remove""
+<br><img src="images/WebGLTutorial00/ServersAdd.png" alt="IMAGE FAIL: "><br><br>
+click on WebGLTurorials
+<br><img src="images/WebGLTutorial00/ServersAddAndRemove.png" alt="IMAGE FAIL: "><br><br>
+click add
+<br><img src="images/WebGLTutorial00/ServersAddAndRemoveHighlight.png" alt="IMAGE FAIL: "><br><br>
+click Finished
+<br><img src="images/WebGLTutorial00/ServersAddAndRemoveAdded.png" alt="IMAGE FAIL: "><br><br>
+now start the server by clicking on the little green circle (in the servers tab, not the one in the eclipse main icon bar)
+<br><img src="images/WebGLTutorial00/Activated_Server.png" alt="IMAGE FAIL: "><br><br>
+You should now have a working html server in your computer, and
+ <a href="http://localhost:8080/WebGLTutorials/WebGLTutorials">http://localhost:8080/WebGLTutorials/WebGLTutorials</a> should run a copy of these Tutorials
+ <br>When you edit the various files in this tutorial, look up at the name of file in the tab at the top. 
+ There will be an asterix to the left of the name signifying unsaved changes have been made.
+ Get ready to hit ctrl-S to save the file, but look down at the servers tab.  The full text of the line is
+<br> Tomcatv7.0 Server at localhost: [Started,Syncronized].  When you hit the ctrl-S, the last word will change
+ to "republish" for a short time and will then switch back to Syncronized when the file edit changes have been compiled.
+ Eclipse will also remove the asterix next to the file name in the file tab.
+ <br>  Should you wish to force a restart of the server, with a re-compile of the project, that  
+ server tab little green circle has become the server restart button.   Halting the server is the red square.  Or you can right mouse click on the 
+ Tomcatv7.0 (the dark blue bar in the image above) and get the popup menu.  If you have been doing a lot of editing, and things get wierd, among the things to try is to stop the server, get the popup menu and click on
+ "clean the server directory".  One of my friends does this regularly. 
+ <h3>Getting GAE (Google App Engine) running under eclipse</h3>  
+ <br>These instructions are based on the <a href="https://developers.google.com/appengine/docs/java/tools/eclipse">Google App Engine</a>  The google
+ instructions do not include the way to allow tomcat server compatability.  When you want to deploy your project to the web, you will want to go into the google app engine documentation to 
+ learn how to regester your project and upload it.   
+<br>&nbsp; &nbsp; &nbsp; &nbsp; Help...
+<br>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Install New Software...  
+<br><img src="images/WebGLTutorial00/HomeSpace001.png" alt="IMAGE FAIL: "><br><br>
+in the work with text box type &nbsp; &nbsp; https://dl.google.com/eclipse/plugin/4.2 &nbsp; &nbsp; &nbsp; and hit enter.
+<br>The block in the middle will show pending for some seconds, but will soon pop up with 
+<br><img src="images/WebGLTutorial00/HomeSpace002.png" alt="IMAGE FAIL: "><br><br>
+I selected a minimal set, and hit next
+<br><img src="images/WebGLTutorial00/HomeSpace003.png" alt="IMAGE FAIL: "><br><br>
+It wants to verify the install details. Hit next.
+<br><img src="images/WebGLTutorial00/HomeSpace004.png" alt="IMAGE FAIL: "><br><br>
+You'll need to accept the licence agreements.  Hit finish.
+<br><img src="images/WebGLTutorial00/HomeSpace005.png" alt="IMAGE FAIL: "><br><br>
+it will take a long time, on the order of a half hour or so, but don't wander off because.
+about 20 min in, it comes up with this which needs to have it's ok button clicked 
+<br><img src="images/WebGLTutorial00/4.png" alt="IMAGE FAIL: "><br><br>
+Seems like only a min later it wants permission to restart eclipse.   Click the yes button
+<br><img src="images/WebGLTutorial00/5.png" alt="IMAGE FAIL: "><br><br>
+when eclipse starts back up again, you'll have the GAE icon in the eclipse icon bar
+<br><img src="images/WebGLTutorial00/6.png" alt="IMAGE FAIL: "><br><br>   
+At this point, you have the GAE installed and can use it as your local server.
+Go to the Project Explorer tab, and RIGHT click on the project you want to have served.
+<br>A dropdown menu drops down. hover over "Debug As" and when the next dropdown menu appears, move over and click on "Web Application"
+<br><img src="images/WebGLTutorial00/6A.png" alt="IMAGE FAIL: "><br><br>
+The console will get a lot of red text.  This is normal.  Eclipse showing red in the console does not even mean that any errors are occuring.
+After a few seconds the last line shoudl be...  
+<br><font color="red">INFO: The admin console is running at http://localhost:8888/_ah/admin</font>
+<br>open up your favorite web browser and enter url <a href="http://localhost:8888/WebGLTutorials">http://localhost:8888/WebGLTutorials</a>
+and you'll be running the tutorial web pages on your own local GAE server.
+<br><br>
+If all that worked, you are ready for <a href="WebGLTutorial01"> Tutorial01 </a>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

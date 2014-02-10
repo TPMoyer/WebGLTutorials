@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
+<!-- above set at the top of the file will set     -->
+<!-- the browser's rendering engine into           -->
+<!-- "Quirks Mode". Replacing this declaration     -->
+<!-- with a "Standards Mode" doctype is supported, -->
+<!-- but may lead to some differences in layout.   -->
+
+<html>
+<!--  © 2013 Thomas P Moyer  -->
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/webGLTutorials.css />"  />
+    <title>WebGLTutorial value aspects</title>
+  </head>
+<body>
+<p id="breadcrumbs"><a href="WebGLTutorials">WebGLTutorials</a> --&gt; value</p>
+<h2>A couple of things which seem to be of some value</h2>
+<br> 
+<br>Multiple canvases
+<br>&nbsp; &nbsp; &nbsp; An architecture which allows multiple canvases to be open on a single page
+<br>
+<br>Rendering that is not "not half fast"
+<br>&nbsp; &nbsp; &nbsp; not drawing the backside of things (the side which you can not see) It is facing away from you
+<br>&nbsp; &nbsp; &nbsp; and you can not see it, so why waste the time to render it.   One application of this 
+<br>&nbsp; &nbsp; &nbsp; technique is to be able to draw a cube as a triangle fan which has only six triangles.  
+<br>
+<br>Knowing which way is up.
+<br>&nbsp; &nbsp; &nbsp; Having easy access to the Point Of View (POV) location in 3D space (X,Y and Z)
+<br>&nbsp; &nbsp; &nbsp; and the POV orientation (the direction in which you are pointed), <a href="http://en.wikipedia.org/wiki/Aircraft_principal_axes" target="_blank">PITCH, ROLL and YAW</a>
+<br>
+<br>EyeFish
+<br>&nbsp; &nbsp; &nbsp; Several of the concepts involved in webGL would be best shown by being able to look at a point of view,
+<br>&nbsp; &nbsp; &nbsp; from a second point of view.   To visualize the two POV's, we'll use the avitar formed around the concept of
+<br>&nbsp; &nbsp; &nbsp; an eyeball on the front of a fish.  The eyeball is because we are looking out of these POV's.  The Fish is 
+<br>&nbsp; &nbsp; &nbsp; because they can hover, unmoving, pointing in any orientation, just like the POV of a webGL application.
+<br>
+<br>CrossHairs
+<br>&nbsp; &nbsp; &nbsp; Hardly a new or creative thing, but it is useful to mark the object in the center of the canvas.
+<br> 
+<br>Striker
+<br>&nbsp; &nbsp; &nbsp; This is one of the things which needs a second POV to see.   The striker is a long thin set of triangles
+<br>&nbsp; &nbsp; &nbsp; going out from the POV.  One striker goes straight out, in the direction straight forward, straight out 
+<br>&nbsp; &nbsp; &nbsp; the crosshairs. &nbsp; Another striker goes out following the movement of the mouse. &nbsp; These are
+<br>&nbsp; &nbsp; &nbsp; not visible from the the striker originating POV, as it is rather like looking at a piece of spaghetti
+<br>&nbsp; &nbsp; &nbsp; end on.
+<br> 
+<br>Triangle intersection
+<br>&nbsp; &nbsp; &nbsp; Let any 6 points in 3D space define two triangles.  Do they intersect?
+<br>&nbsp; &nbsp; &nbsp; This combines with the striker to detect points in the object field to allow the 3D movement interface.
+<br>&nbsp; &nbsp; &nbsp; You can't know if you have bumped up against the wall if you can not calculate triangle intersections.
+<br>&nbsp; &nbsp; &nbsp; This technique is quite fast, as it is modeled after the work of Georg Glaser in C and Dos.   This 
+<br>&nbsp; &nbsp; &nbsp; solution, however, works correctly in all orientations.  
+<br>
+<br>3D movement interface
+<br>&nbsp; &nbsp; &nbsp; Put you mouse on a an object.  Hold down the left mouse button and move the mouse.  The images shifts
+<br>&nbsp; &nbsp; &nbsp; in a way which has the same portion of the moused-over object stays under the mouse.
+<br>  
+<br>&nbsp; &nbsp; &nbsp; Hold down the right mouse button and move the mouse up or down.   The image tilts thru the point
+<br>&nbsp; &nbsp; &nbsp; that the crosshair is aimed at.
+<br>
+<br>&nbsp; &nbsp; &nbsp; Hold down the shift key and the right mouse button and move the mouse left or right.   The image spins around the point
+<br>&nbsp; &nbsp; &nbsp; that the crosshair is aimed at.  One can make the interface select between two spin modes, or code one
+<br>&nbsp; &nbsp; &nbsp; or the other.  The spin can be in the XY plane, or can be orthogonal to the forward direction of the 
+<br>&nbsp; &nbsp; &nbsp; POV.
+</body>
+</html>

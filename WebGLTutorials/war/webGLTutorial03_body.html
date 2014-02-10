@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<!--  © 2013 Thomas P Moyer  -->
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+</head>
+<body>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div> 
+<ul>
+	<li class="toclevel-1 tocsection-1"><span class="tocnumber">1</span> <span class="toctext">Preamble</span>
+	<ul>
+		<li class="toclevel-2 tocsection-2"><a href="#welcome"><span class="tocnumber">1.1</span> <span class="toctext">Welcome</span></a></li>
+		<li class="toclevel-2 tocsection-4"><a href="#aQuickWarning"><span class="tocnumber">1.2</span> <span class="toctext">a Quick Warning</span></a></li>
+		<li class="toclevel-2 tocsection-5"><a href="#anOverView"><span class="tocnumber">1.3</span> <span class="toctext">an OverView</span></a></li>
+	</ul>
+	<li class="toclevel-1 tocsection-5"><span class="tocnumber">2</span> <span class="toctext">The Code</span>
+	<ul>
+		<li class="toclevel-2 tocsection-6"><a href="#theShaders"><span class="tocnumber">2.1</span> <span class="toctext">The Shaders</span></a></li>
+		<li class="toclevel-2 tocsection-7"><a href="#theJavaScript"><span class="tocnumber">2.2</span> <span class="toctext">The JavaScript</span></a></li>
+		<li class="toclevel-2 tocsection-7"><a href="#overHead"><span class="tocnumber">2.2</span> <span class="toctext">Overhead</span></a></li>
+		<li class="toclevel-2 tocsection-8"><a href="#tutorial01"><span class="tocnumber">2.3</span> <span class="toctext">tutorial01</span></a></li>
+		<li><ul>
+			<li class="toclevel-2 tocsection-6"><a href="#coOrdinates"><span class="tocnumber">2.3.1</span> <span class="toctext">co-Ordinates</span></a></li>
+			<li class="toclevel-2 tocsection-8"><a href="#userInterface"><span class="tocnumber">2.3.2</span> <span class="toctext">The User Interface</span></a></li>
+<!--			<li class="toclevel-2 tocsection-8"><a href="#tutorial01"><span class="tocnumber">2.3</span> <span class="toctext">tutorial01</span></a></li> -->
+		</ul></li>
+	</ul>
+	<li class="toclevel-1 tocsection-9"><a href="#summary"><span class="tocnumber">3</span> <span class="toctext">Summary</span></a></li>
+<!---->
+  	<li class="toclevel-1 tocsection-9"><a href="#editPoint"><span class="tocnumber">3</span> <span class="toctext">Edit Point</span></a></li>
+<!-- 	-->
+</ul>
+</td></tr>
+</table>
+<a id="welcome"></a> 
+<h3> Welcome</h3>
+<p>Welcome to the third in my series of WebGL Tutorials.  These tutorials are based on the well known 
+<a href="http://learningwebgl.com/blog/?page_id=1217"> Learning WebGL </a> series, with this third tutorial being based on the WebGL Lesson3.
+It shows you how to add animation to the shapes we learned to color on a web page in tutorial02.  This and the following tutorials will go over only
+the things which are new to that tutorial.  Animation is the thing added in this tutorial 
+</p>
+<a id="aQuickWarning4"></a>
+<h3> a quick warning</h3>   	
+<p>These tutorials are a best match with people who have a reasonable amount of programming experience, but no prior exposure to computer
+graphics is required.  The goal is to get you up and running a working 3D interactive web page as quickly as possible, with a good understanding
+of what is going on.  Writing these tutorials is how I'm learning WebGL myself, so there may well be (and probably are) errors; use at your own risk.
+ However, I&#39;ll be fixing bugs and correcting misconceptions when I hear about them, so if you see anything wrong, please let me know in the comments. 
+</p>
+<a id="anOverView"></a><h3> an OverView</h3>   	
+<p>The code from webGLTutirial02 is mutated to add animation to the shapes.
+<br>The different shapes are rotated around different axies at differenct speeds.  The animation technique is to set up a loop which increments
+the amount of rotation, and draws the scene again.  And repeat in a loop endlessly.  
+
+</p>
+<a id="theShaders"></a><h3>The Shaders</h3>
+<p>The shaders are unchanged from webGLTutorial02
+</p> 
+<a id="theJavaScript"></a><h3>The JavaScript</h3>
+<p>The order of the functions in the webGLTutorial02.js has again been left in the same order as their execution order.   The .jsp onload 
+starts us out in webGLStart02() which is very similar to it's webGLTutorial02 version.  In fact it calls many of the javascript functions from the 
+prior tutorial02. &nbsp; &nbsp;
+</p>
+<b>webGLTutorial03.js... &nbsp; &nbsp; webGLStart03</b><br><img src="images/WebGLTutorial03/WebGLTutorial03_008.png" alt="IMAGE FAIL: 03_08">
+<p>Just before the drawScene03 function, we attach a number of variables we'll call rotation variables.   They have an r before the name
+of the shape they will individually control.  The rotation variables get attached to the gl array, mostly as a way to avoid making them globals.
+</p><p>
+ The drawScene03 function is a slight modification from the drawScene02, but the real difference is the tick03().   This function
+is named to be reminicent of the tick,tick,tick sound of an analog stop watch.  The drawScene03 function is called for each of the canvas's her,
+in order to have the XYZPRY text below the canvases set.
+</p>  
+<br><b>webGLTutorial03.js... &nbsp; &nbsp; drawScene03()</b><br><img src="images/WebGLTutorial03/WebGLTutorial03_009.png" alt="IMAGE FAIL: 03_09">
+<p>The sections of the drawScene03 function which draw each of the shapes have been made separate from one another by each being bracketed by
+a <b>glPushMatrix(); &nbsp; &nbsp;	glPopMatrix();</b> pair.   Our previous tutorials had each of the sections do their translations based on
+the accumulated translations of all the sections which came before.  To achieve the effect of having each section rotate around its own axis
+ requires independent translation.   The push/pop pair of functions act on the stacks of mvm matrixes attached to each of the gl's in the gl[] array.
+ This matrix pushing and popping on members of an array of GL contexts is handled (hopefully) under the covers, seamlessly, in gl-aux2.js &nbsp; &nbsp;	
+The effect is what a programmer needs to understand, in order to know when to call upon this technique.   When a new pushMatrix is called, the orientatin
+of all that is, is set to be at the origin, 0,0,0 looking down the negative Z axis.   The XYZs of our shape vertices will be applied to a framework which is shifted (translated)
+and twisted (rotated) form this original orientation.   When the popMatrix is encountered, the existing history of the translation/rotations is eraced,
+and whatever mvm was in place prior to the pushMatrix, is again the current MVM.
+</p><p>Line 61 is the rotate... the "how far to turn" is set with the rotate variable... rpoint for the point, rLine for the two lines.  These
+are incremented in the tick() animate() pair we'll go thru next.
+</p><p>The way the point and the two lines move is instructive as to the way the translate function interacts with the vertex locations.  
+Both these shapes are rotated around an axiz which is paralell to our line of sight.  The translate and the rotate functions act on the 0,0,0 position.
+ Thus having chosen the 3'rd point, at 0.2, 0.0, 0.0  gives us a radius for the rotation of of 0.2
+<br>The two lines, uses all 4 of the vertices, with the first point being at the origin.   The vertex at the origin does not move as the other vertices
+ spin around this point. 
+ </p><p> The tick program calls the drawScene funciton for both canvases and then calls animate(3).
+ </p>
+<br><b>webGLTutorial03.js... &nbsp; &nbsp; tick03()</b><br><img src="images/WebGLTutorial03/WebGLTutorial03_005.png" alt="IMAGE FAIL: 03_05">
+<p>Line 115 is a very special function <b>requestAnimFrame(tick03);</b>  This causes the web browser to call an instance of the function whose
+ name appears inside the () after a slight delay, or after the browser re-opens the tab containing our canvas.   There are a lot of systems troubles
+ avoided by using this function.  No the least of these avoided troubles is wasting cpu and battery by continually executing code which has no visible
+effect.  We call this function from within tick03, and ask it to call tick03.   This sets up an unending loop, just what we want. 
+</p>
+ <br><b>webGLTutorial03.js... &nbsp; &nbsp; animate03()</b><br><img src="images/WebGLTutorial03/WebGLTutorial03_006.png" alt="IMAGE FAIL: 03_06">
+<p>This is our animation function.  It causes a smooth looking set of rotations to occur, even when there are interruptions to the amount of time the
+graphics display device can pay attention to our program.   It does this by requesting (line 126) the current time,  checking how long it has been 
+since the last pass thru the animate function (line 128), and (lines 129 thru 133) changing the amount of rotation stored in each of the rotation variables.
+The different multiplyer factors cause the effect of having the different shapes rotate at different speeds.   
+<br>&nbsp; &nbsp;The final act is to save the current time to  a variable, so as to have it available the next time the animate function is calle. 
+</p><p>Done  <a id="editPoint"></a>
+</p>
+<h3>The User Interface</h3><a id="userInterface"></a>
+<p>The user interface is unchanged from WebGLTutorial01.
+<a id="summary"></a><h3> Summary</h3>
+<p>Adding animation was a relatively small modification.  A large portion of the tricky problems with animation are avoided by using the
+requestAnimFrame() function.   A timer is used to cause the amount of motion change to be proportional to the time since the prior redraw of 
+the scene.
+</body>
+</html>

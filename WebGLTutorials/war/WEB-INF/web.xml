@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+	<servlet>
+		<servlet-name>WebGLTutorials</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorialsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorials</servlet-name>
+		<url-pattern>/WebGLTutorials</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial01Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial01Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial01Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial01</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	
+		<servlet-name>WebGLTutorial02Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial02Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial02Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial02</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial03Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial03Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial03Servlet</servlet-name>
+	<url-pattern>/WebGLTutorial03</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial04Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial04Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial04Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial04</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial05Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial05Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial05Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial05</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial06Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial06Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial06Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial06</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial06WikiServlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial06WikiServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial06WikiServlet</servlet-name>
+		<url-pattern>/WebGLTutorial06Wiki</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial07Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial07Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial07Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial07</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>WebGLTutorial08Servlet</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorial08Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorial08Servlet</servlet-name>
+		<url-pattern>/WebGLTutorial08</url-pattern>
+	</servlet-mapping>
+  
+  <welcome-file-list>
+    <!--  <welcome-file>index.html</welcome-file>-->
+     <welcome-file>WebGLTutorials</welcome-file>
+  </welcome-file-list>
+<!-- 
+	<servlet>
+		<servlet-name>WebGLTutorials</servlet-name>
+		<servlet-class>webGLTutorials.WebGLTutorialsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>WebGLTutorials</servlet-name>
+		<url-pattern>/webgltutorials</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	 -->
+</web-app>
