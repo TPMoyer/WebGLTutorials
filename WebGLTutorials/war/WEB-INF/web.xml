@@ -22,8 +22,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>WebGLTutorial01Servlet</servlet-name>
 		<url-pattern>/WebGLTutorial01</url-pattern>
 	</servlet-mapping>
-	<servlet>
 	
+	<servlet>
 		<servlet-name>WebGLTutorial02Servlet</servlet-name>
 		<servlet-class>webGLTutorials.WebGLTutorial02Servlet</servlet-class>
 	</servlet>

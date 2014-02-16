@@ -340,9 +340,8 @@ function loadTeapot() {
 	request.onreadystatechange = function () {
 		if (request.readyState == 4) {
 			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount07));
-			var sayVarList = false;
-			//sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(request.responseText,(sayVarList?jsonReviverVarList:null));
+			//gl.sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
 			handleLoadedTeapot(parsedJson,gl.lower07At);gl[gl.lower07At].numCriticalJsonsDone++;
 			handleLoadedTeapot(parsedJson,gl.upper07At);gl[gl.upper07At].numCriticalJsonsDone++;
 			//AL("got teapot json "+gl[gl.lower07At].numCriticalJsonsDone+" "+gl[gl.upper07At].numCriticalJsonsDone );
@@ -389,9 +388,8 @@ function loadSphere() {
 	request.onreadystatechange = function () {
 		if (request.readyState == 4) {
 			//AL(sprintf("%3d loadSphere() request readyState==4",gl.animationCount07));
-			var sayVarList = false;
-			//sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(request.responseText,(sayVarList?jsonReviverVarList:null));
+			//gl.sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
 			handleLoadedSphereNormals(parsedJson,gl.lower07At);
 			handleLoadedSphereNormals(parsedJson,gl.upper07At);
 			handleLoadedSphere(parsedJson,gl.lower07At);gl[gl.lower07At].numCriticalJsonsDone++;

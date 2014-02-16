@@ -13,151 +13,234 @@
 <link rel="stylesheet" type="text/css" href="<c:url value="css/spectrum.css" />" />
 <script type="text/javascript" src="js/jquery-1.9.0.js"></script>
 <script type="text/javascript" src="js/jquery-ui-1.10.0.custom.js"></script>
-<script type="text/javascript" src="js/gl-matrix.js"></script>     <%--needs to be above gl-aux2.js     --%>
+<script type="text/javascript" src="js/gl-matrix.js"></script>     <%--needs to be above gl-ux2.js     --%>
 <script type="text/javascript" src="js/gl-aux2.js"></script>
 <script type="text/javascript" src="js/webgl-utils.js"></script>
 <script type="text/javascript" src="js/sprintf-0.7-beta1.js"></script>
 <script type='text/javascript' src="dwr/engine.js"></script>
 <script type="text/javascript" src="js/spectrum.js"></script>
 <script type='text/javascript' src="dwr/interface/R.js"></script>
-<!-- <script type="text/javascript" src="js/webGLTutorial05.js"></script>  -->
 <script type="text/javascript" src="js/webGLTutorial08.js"></script>
 
-<script id="vertex-shader3" type="text/webgl">
+<script id="vertex-shader4" type="text/webgl">
+
 	attribute vec3 aXYZ ;
 	attribute vec3 aNormal ;
+	attribute vec2 aTextureCoord ;
 	
 	uniform mat4 uMvm ;
 	uniform mat4 uPerspectiveMatrix ;
 	uniform mat3 uNormal ;
 	
+	varying vec2 vTextureCoord;
+	varying vec3 vTransformedNormal;
+	varying vec4 ecVertexXYZA;
+
+	void main(void) {
+		gl_PointSize=9.;
+		ecVertexXYZA = uMvm * vec4( aXYZ,1.0);
+		gl_Position = uPerspectiveMatrix  * ecVertexXYZA;
+		vTextureCoord = aTextureCoord ;
+		vTransformedNormal = uNormal  * aNormal ;
+	}
+</script>
+<script id="fragment-shader3" type="text/webgl">
+	precision mediump float;
+	
+	varying vec2 vTextureCoord;
+	varying vec3 vTransformedNormal;
+	varying vec4 ecVertexXYZA;
+
 	uniform bool uUseLighting ;
-	uniform bool uUseDirectionalLight;
-	uniform bool uUsePointLight;
+	uniform bool uUseTextures ;
+	uniform bool uUseFullEmissivity;
+
 	uniform bool uShowSpecularHighlights ;
 	uniform bool uShowNegativeDiffuse;
 	
 	uniform vec3 uAmbientLightRGB ;
 
+	uniform bool uUseDirectionalLight;	
 	uniform vec3 uDirectionalLightXYZ;
 	uniform vec3 uDirectionalLightSpecularRGB;	
 	uniform vec3 uDirectionalLightDiffuseRGB;
-	
+
+	uniform bool uUsePointLight;
 	uniform vec3 uPointLightXYZ ;
 	uniform vec3 uPointLightSpecularRGB ;
-	uniform vec3 uPointLightDiffuseRGB;
-	
+	uniform vec3 uPointLightDiffuseRGB ;
+
+	uniform bool  uUseMaterials;
 	uniform vec3  uMaterialAmbientRGB;
-	uniform vec3  uMaterialSpecularRGB;
 	uniform vec3  uMaterialDiffuseRGB;
+	uniform vec3  uMaterialSpecularRGB;
 	uniform float uMaterialShininess;
 	uniform vec3  uMaterialEmissiveRGB;
 	
-	varying vec3 vLightWeighting;
+	uniform sampler2D uSampler ;
 	
 	void main(void) {
-		gl_PointSize=9.;
-		vec4 ecVertexXYZA = uMvm  * vec4(aXYZ , 1.0);
-		gl_Position = uPerspectiveMatrix  * ecVertexXYZA;
-		if (!uUseLighting ) {
-			vLightWeighting = vec3(1.0, 1.0, 1.0);
+		vec3 vLightWeighting;
+		 if(uUseFullEmissivity){
+			gl_FragColor = vec4(1.);
 		} else {
-			vec3 transformedNormal = uNormal  * aNormal ;
-			float pointLightDiffuseWeighting;
-			float pointLightSpecularWeighting = 0.0;
-			float directionalLightDiffuseWeighting;
-			float directionalLightSpecularWeighting = 0.0;
-			if(uUsePointLight){
-				vec3 normal = normalize(transformedNormal);
-				vec3 pointLightDirection  = normalize(uPointLightXYZ  - ecVertexXYZA.xyz); 
-				pointLightDiffuseWeighting = dot(normal, pointLightDirection);              /* most shaders  max(this,0.) */
-				if (   uShowSpecularHighlights
-				    &&(0.<pointLightDiffuseWeighting)
-				) { 
-					vec3 eyeDirection = normalize(-ecVertexXYZA.xyz);
-					vec3 reflectionDirection = reflect(-pointLightDirection, normal);
-					pointLightSpecularWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess );
-				}
-				if(0.>pointLightDiffuseWeighting){
-					pointLightDiffuseWeighting*=(true==uShowNegativeDiffuse?-.25:0.);
-				}
+			if (!uUseLighting) {
+				vLightWeighting = vec3(1.0, 1.0, 1.0);
 			} else {
-				pointLightDiffuseWeighting = 0.0;
+				float pointLightDiffuseWeighting;
+				float pointLightSpecularWeighting = 0.0;
+				float directionalLightDiffuseWeighting;
+				float directionalLightSpecularWeighting = 0.0;
+				if(uUsePointLight){
+					vec3 pointLightDirection  = normalize(uPointLightXYZ  - ecVertexXYZA.xyz); 
+					pointLightDiffuseWeighting = dot(vTransformedNormal, pointLightDirection);              /* most shaders  max(this,0.) */
+					if (   uShowSpecularHighlights
+					    &&(0.<pointLightDiffuseWeighting)
+					) { 
+						vec3 eyeDirection = normalize(-ecVertexXYZA.xyz);
+						vec3 reflectionDirection = reflect(-pointLightDirection, vTransformedNormal);
+						pointLightSpecularWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess );
+					}
+					if(0.>pointLightDiffuseWeighting){
+						pointLightDiffuseWeighting*=(true==uShowNegativeDiffuse?-.25:0.);
+					}
+				} else {
+					pointLightDiffuseWeighting = 0.0;
+				}
+				if(uUseDirectionalLight){
+					directionalLightDiffuseWeighting = dot(vTransformedNormal, uDirectionalLightXYZ); /* most shaders  max(this,0.) */ 
+					if (  uShowSpecularHighlights
+					    &&(0.<directionalLightDiffuseWeighting)
+					) {
+						vec3 eyeDirection = normalize(-ecVertexXYZA.xyz);
+						vec3 reflectionDirection = reflect(-uDirectionalLightXYZ, vTransformedNormal);
+						directionalLightSpecularWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
+					}
+					if(0.>directionalLightDiffuseWeighting){
+						directionalLightDiffuseWeighting*=(true==uShowNegativeDiffuse?-.25:0.);
+					}
+				} else {
+					directionalLightDiffuseWeighting = 0.0;
+				}	
+				if(uUseMaterials){
+					vLightWeighting =									uMaterialAmbientRGB  * uAmbientLightRGB
+						+ directionalLightSpecularWeighting *  uMaterialSpecularRGB * uDirectionalLightSpecularRGB
+						+ directionalLightDiffuseWeighting  *  uMaterialDiffuseRGB  * uDirectionalLightDiffuseRGB
+						+ pointLightSpecularWeighting       *  uMaterialSpecularRGB * uPointLightSpecularRGB 
+						+ pointLightDiffuseWeighting        *  uMaterialDiffuseRGB  * uPointLightDiffuseRGB 
+						+ uMaterialEmissiveRGB
+					;
+					} else {
+					vLightWeighting =								 uAmbientLightRGB
+						+ directionalLightSpecularWeighting * uDirectionalLightSpecularRGB
+						+ directionalLightDiffuseWeighting  * uDirectionalLightDiffuseRGB
+						+ pointLightSpecularWeighting       * uPointLightSpecularRGB   
+						+ pointLightDiffuseWeighting        * uPointLightDiffuseRGB 
+					;
+					}
 			}
-			if(uUseDirectionalLight){
-				directionalLightDiffuseWeighting = dot(transformedNormal, uDirectionalLightXYZ); /* most shaders  max(this,0.) */ 
-				if (  uShowSpecularHighlights
-				    &&(0.<directionalLightDiffuseWeighting)
-				) {
-					vec3 eyeDirection = normalize(-ecVertexXYZA.xyz);
-					vec3 reflectionDirection = reflect(-uDirectionalLightXYZ, transformedNormal);
-					directionalLightSpecularWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), uMaterialShininess);
-				}
-				if(0.>directionalLightDiffuseWeighting){
-					directionalLightDiffuseWeighting*=(true==uShowNegativeDiffuse?-.25:0.);
-				}
+			vec4 fragmentColor;
+			if (uUseTextures ) {
+				fragmentColor = texture2D(uSampler , vec2(vTextureCoord.s, vTextureCoord.t));
 			} else {
-				directionalLightDiffuseWeighting = 0.0;
-			}	
-			vLightWeighting =									uMaterialAmbientRGB  * uAmbientLightRGB
-				+ directionalLightSpecularWeighting *  uMaterialSpecularRGB * uDirectionalLightSpecularRGB
-				+ directionalLightDiffuseWeighting  *  uMaterialDiffuseRGB  * uDirectionalLightDiffuseRGB
-				+ pointLightSpecularWeighting       *  uMaterialSpecularRGB * uPointLightSpecularRGB 
-				+ pointLightDiffuseWeighting        *  uMaterialDiffuseRGB  * uPointLightDiffuseRGB 
-				+ uMaterialEmissiveRGB
-			;
+				fragmentColor = vec4(1.0, 1.0, 1.0, 1.0);
+			}
+			gl_FragColor = vec4(fragmentColor.rgb * vLightWeighting, fragmentColor.a);
 		}
 	}
 </script>
-<script id="fragment-shader2" type="text/webgl">
-	precision mediump float;
-	
-	varying vec3 vLightWeighting;
-	
-	void main(void) {
-		gl_FragColor = vec4(vLightWeighting, 1.0);
-	}
-</script>
+ <!-- 
+			<script id="vertex-shader5" type="text/webgl">
+			/* perspective,   no colors or materials,  passes textures */
+				attribute vec3 aVertexPosition;
+				attribute vec2 aTextureCoord;
+				
+				uniform mat4 uMVMatrix;
+				uniform mat4 uPMatrix;
+				
+				varying vec2 vTextureCoord;
+				
+				void main(void) {
+					gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+					vTextureCoord = aTextureCoord;
+				}
+			</script>
+			<script id="fragment-shader4" type="text/webgl">
+			/* gl_FragColor comes from 2D texture */
+				#ifdef GL_ES
+					precision highp float;
+				#endif
+				
+				varying vec2 vTextureCoord;
+				
+				uniform sampler2D uSampler;
+				
+				void main(void) {
+					gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
+				}
+			</script>
+-->
 </head>
-<body onload="webGLStart08();">
+<body onload="webGLStart08();" style="overflow: auto; overflow-x: hidden;">
 <p id="breadcrumbs">
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorials">WebGLTutorials</a> -&gt; WebGLTutorial08 
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorials">WebGLTutorials</a> -&gt; WebGLTutorial08
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial09"> forward to Tutorial09 (will error, not yet written) </a>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial07"> backward to Tutorial07 </a>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial08"> forward to Tutorial09 (will error, not yet written) </a>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial06"> backward to Tutorial07 </a>
+
 </p>
-<p id="header">
-Tutorial08 7&nbsp; Normals: Faceted vs Smooth &nbsp; &nbsp; Shaders: Vertex vs Fragemt
-</p>
+<h2>Tutorial08 &nbsp; Text</h2>
 <canvas id="tutorial08-canvas0" tabindex="0" width="500" height="500" style="border:none; position:absolute; left: 40px; top:80px;"></canvas>
 <canvas id="tutorial08-canvas1" tabindex="1" width="500" height="500" style="border:none; position:absolute; left:552px; top:80px;"></canvas>
-
+<div id="loadingtext">Loading world...</div>
 <div id="tutorial08Tabs"> 
-	<ul> 
-		<li><a href="#idTab080">Movement</a></li> 
-		<li><a href="#idTab081">Directional Light</a></li>
-		<li><a href="#idTab082">Point Light</a></li>  
-		<li><a href="#idTab083">Construction</a></li> 
-	</ul> 
-	<div id="idTab080" style ="height:350px;">
+	<ul>
+		<li><a href="#idTab080">Textures</a></li>  
+		<li><a href="#idTab081">ViewPoint Movement</a></li> 
+		<li><a href="#idTab082">Directional Light</a></li>
+		<li><a href="#idTab083">Point Light</a></li>
+		<li><a href="#idTab084">Rotation Speed</a></li>
+	</ul>
+	<div id="idTab080">
+		<div style="position:relative; left:-10px; top:0px; width:150px;"> <!-- this first div is the span setter, so needs to be relative -->
+			<label><Input type = radio Name = radioTextures id="tex00" >None</label><br>
+			<label><Input type = radio Name = radioTextures id="tex01" >Galvanized</label><br>
+			<label><Input type = radio Name = radioTextures id="tex02" checked="checked">Earth</label><br>
+			<label><Input type = radio Name = radioTextures id="tex03" >NeHe</label><br>
+			<label><Input type = radio Name = radioTextures id="tex04" >glass</label><br>
+			<label><Input type = radio Name = radioTextures id="tex05" >Alphabet</label><br>
+		</div>
+		<div style="position:absolute; left:130px; top:60px; width:650px;"> <!-- In order to not have things cascade lower and lower, go absolute -->
+			<label><Input type = radio Name = radioShape id="shape00" >Teapot</label><br>
+			<label><Input type = radio Name = radioShape id="shape01" checked="checked">Sphere</label><br>
+			<!-- <label><Input type = radio Name = radioShape id="shape02" >Cube</label><br>
+			<label><Input type = radio Name = radioShape id="shape03" >IcosaHedron</label><br>
+			 -->
+		</div>
+		<div style="position:absolute; left:230px; top:80px; width:550px;"> <!-- In order to not have things cascade lower and lower, go absolute -->
+			<label><Input type = checkbox Name = sphereLines id="sphereLines" >SphereLines</label><br>
+		</div>
+		<input type="button" id="cullFaces" style="position:relative; left:590px;" value=" Enable CullFace " ></input>
+	</div>   
+	<div id="idTab081" style ="height:350px;">
 		<div style="position:relative; top:-10px; left:-10px;">
 			<div id="xyzpry0" class="xyzpry" style="position:relative; left: 40px;">xyz=( ###.###, ###.###, ###.###) pry=(###.###,###.###,###.###)</div>
-			<input type="button" id="home08-00"  style="position:relative; left: 0px; top:3px;" value="home" ></input>
-			<input type="button" id="home08-01"  style="position:relative; left: 0px; top:3px;" value="home big" ></input>
-			<input type="button" id="step08_up0" style="position:relative; left:60px; top:3px;" value="step up" ></input>
-			<input type="button" id="step08_dn0" style="position:relative; left:60px; top:3px;" value="step dn" ></input>
-			<input type="button" id="turn08_up0" style="position:relative; left:60px; top:3px;" value="turn up" ></input>
-			<input type="button" id="turn08_dn0" style="position:relative; left:60px; top:3px;" value="turn dn" ></input>
+			<input type="button" id="home08-00"  style="position:relative; left: 0px; top:3px;" value="home North" ></input>
+			<input type="button" id="home08-01"  style="position:relative; left: 0px; top:3px;" value="home" ></input>
+			<input type="button" id="step08_up0" style="position:relative; left:40px; top:3px;" value="step up" ></input>
+			<input type="button" id="step08_dn0" style="position:relative; left:40px; top:3px;" value="step dn" ></input>
+			<input type="button" id="turn08_up0" style="position:relative; left:40px; top:3px;" value="turn up" ></input>
+			<input type="button" id="turn08_dn0" style="position:relative; left:40px; top:3px;" value="turn dn" ></input>
 			<div id="stepTurn0" class="xyzpry"   style="position:relative; left:230px; top:3px;">step=###.###      turn= Pi/###</div>
 		</div>	
 		<div style="position:relative; left:530px; top:-66px">
 			<div id="xyzpry1" class="xyzpry" style="position:relative; left:40px;">xyz=( ###.###, ###.###, ###.###) pry=(###.###,###.###,###.###)</div>
-			<input type="button" id="home08_10"  style="position:relative; left: 0px; top:3px;" value="home" ></input>
-	 		<input type="button" id="home08_11"  style="position:relative; left: 0px; top:3px;" value="home big" ></input>
-			<input type="button" id="step08_up1" style="position:relative; left:60px; top:3px;" value="step up" ></input>
-			<input type="button" id="step08_dn1" style="position:relative; left:60px; top:3px;" value="step dn" ></input>
-			<input type="button" id="turn08_up1" style="position:relative; left:60px; top:3px;" value="turn up" ></input>
-			<input type="button" id="turn08_dn1" style="position:relative; left:60px; top:3px;" value="turn dn" ></input>
+			<input type="button" id="home08_10"  style="position:relative; left: 0px; top:3px;" value="home North" ></input>
+	 		<input type="button" id="home08_11"  style="position:relative; left: 0px; top:3px;" value="home" ></input>
+			<input type="button" id="step08_up1" style="position:relative; left:40px; top:3px;" value="step up" ></input>
+			<input type="button" id="step08_dn1" style="position:relative; left:40px; top:3px;" value="step dn" ></input>
+			<input type="button" id="turn08_up1" style="position:relative; left:40px; top:3px;" value="turn up" ></input>
+			<input type="button" id="turn08_dn1" style="position:relative; left:40px; top:3px;" value="turn dn" ></input>
 			<div id="stepTurn1" class="xyzpry"   style="position:relative; left:230px; top:3px;">step=###.###      turn= Pi/###</div>
 		</div>
 		<div style="position:relative; left:0px; top:-50px;">
@@ -227,7 +310,7 @@ Tutorial08 7&nbsp; Normals: Faceted vs Smooth &nbsp; &nbsp; Shaders: Vertex vs F
 			</div>	
 		</div>
 	</div> 
-	<div id="idTab081" style ="height:100px;" >
+	<div id="idTab082" style ="height:100px;" >
 		<div style="position:relative; top:-10px">
 			<label><input type="checkbox" id="lighting1"  checked > lighting</label> &nbsp; &nbsp;
 			<label><input type="checkbox" id="directionalLight1" checked >Directional Light</label> &nbsp; &nbsp;
@@ -256,12 +339,12 @@ Tutorial08 7&nbsp; Normals: Faceted vs Smooth &nbsp; &nbsp; Shaders: Vertex vs F
 			<div style="position:relative; left:550px; top:-20px; width:150px;">sunrise</div>
 			<div id="directionalLightXYZSlider" style="position:relative; top:-30px;"></div>
 		</div> 
-		<div id="shiner1" style="position:relative; left:690px; top:-160px; width:150px; display: none;">
+		<div id="shiner1" style="position:relative; left:690px; top:-160px; width:150px;">
 			Shininess	
 			<div id="shininessSlider1"></div>
 		</div> 				
 	</div> 
-	<div id="idTab082" style ="height:100px;" >
+	<div id="idTab083" style ="height:100px;" >
 		<div style="position:relative; top:-10px">
 			<label><input type="checkbox" id="lighting2"  checked > lighting</label> &nbsp; &nbsp;
 			<label><input type="checkbox" id="directionalLight2" checked >Directional Light</label> &nbsp; &nbsp;
@@ -283,44 +366,39 @@ Tutorial08 7&nbsp; Normals: Faceted vs Smooth &nbsp; &nbsp; Shaders: Vertex vs F
 				<input id="ambient2"  type='color' onchange='handleAmbientChange(this);' value="#333333">
 			</div>		
 		</div>
-		<!-- 
-		<div style="position:relative; left:-10px; top:-90px; width:650px;">
-		   Directional light,like the sun, is so far away that all elements are lit from the same direction.
-			<div style="position:relative; left:-10px; top: 10px; width:150px;">sunset</div>
-			<div style="position:relative; left:277px; top:-15px; width:150px;">noon</div>
-			<div style="position:relative; left:550px; top:-20px; width:150px;">sunrise</div>
-			<div id="pointLightXYZSlider" style="position:relative; top:-30px;"></div>
-		</div>
-		-->
-		<div id="shiner2" style="position:relative; left:690px; top:-80px; width:150px; display: none;">
+		<div id="shiner2" style="position:relative; left:690px; top:-80px; width:150px;">
 			Shininess	
 			<div id="shininessSlider2"></div>
 		</div> 
-	
+	</div>
+	<div id="idTab084" style ="height:100px;" >
+		<div style="position:relative; left:-10px; top:0px; width:650px;">
+		   Rotation speed
+			<div style="position:relative; left:-10px; top: 10px; width:150px;">stop</div>
+			<div style="position:relative; left:550px; top:-20px; width:150px;">fast</div>
+			<div id="rotationSpeedSlider" style="position:relative; top:-30px;"></div>
+		</div> 
 	</div> 
-	<div id="idTab083">
-		<input type="button" id="rotating"  style="width:100px;" value="Rotate Halt" ></input>
-		<input type="button" id="rotateZero"  style="width:140px;" value="Rotate Zero" ></input>
-		<input type="button" id="cullFaces" style="position:relative; left:590px;" value=" Disable CullFace " ></input>
-		<br>
-		<input type="button" id="constructing"  style="width:160px;" value="Construct Cycle" ></input>
-		<input type="button" id="constructDecrement"  style="width:160px;" value="Construct Decrement" ></input>
-		<input type="button" id="constructIncrement"  style="width:160px;" value="Construct Increment" ></input>
-		<span id="construct08" class="xyzpry">Construct At </span>
-		<br>
-		<input type="button" id="constructing2" style="width:160px;  left:600px;" value="Construct2 Cycle" ></input>
-		<input type="button" id="constructDecrement2"  style="width:160px;" value="Construct2 Decrement" ></input>
-		<input type="button" id="constructIncrement2"  style="width:160px;" value="Construct2 Increment" ></input>
-		<span id="construct082" class="xyzpry">Construct2 At </span>
 
-
-		  
-	</div> 
 </div>
-<div id="loadingtext">Loading world...</div>
+
 <div style="position:relative; top:500px;">
-	<c:out value='${  form_html}' escapeXml='false'/> <!-- no form was made so this just adds a zero length string  -->
-	<c:out value='${result_html}' escapeXml='false'/>
-</div>	
+<!-- 
+    Texture:
+    <select id="texture">
+        <option value="none">None</option>
+        <option selected value="galvanized">Galvanized</option>
+        <option value="earth">Earth</option>
+    </select>
+    <br/>
+-->
+ <br>
+    Galvanized texture courtesy of <a href="http://www.arroway-textures.com/">Arroway Textures</a>.<br/>
+    Earth texture courtesy of <a href="http://visibleearth.nasa.gov/view_cat.php?categoryID=1484&order=asc&p=2">NASA Blue Marble Collection</a>.<br/><br/>
+<br> 	
+
+<c:out value='${  form_html}' escapeXml='false'/>
+<c:out value='${result_html}' escapeXml='false'/>
+</div>
 </body>
 </html>

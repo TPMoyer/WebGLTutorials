@@ -1,170 +1,42 @@
-/* © 2013 Thomas P Moyer  */ 
-function colorEncrypt(int){
-	
-	
-	
-} 
+/*   © 2014 Thomas P Moyer  */
+
 function webGLStart08() {
 	//AL("cme@ webGLTutorial08.js webGLStart");
-	window.resizeTo( 1100,700);
-	var canvas = document.getElementById("tutorial08-canvas0");
+	gl.animationCount08=0;
+	var canvas;
+	canvas = document.getElementById("tutorial08-canvas0");
 	initGL(canvas);
 	gl.lower08At=gl.at;
+	
 	canvas = document.getElementById("tutorial08-canvas1");
 	initGL(canvas);
 	gl.upper08At=gl.at;
 	//AL("gl.lower08At="+gl.lower08At+" gl.upper08At="+gl.upper08At);
 	
-	//loadTeapot(false);
-//	checkoutTeapotJsons(false);
-	loadFacetedSphere08(true); /* true === isLastJson*/	
+	gl[gl.lower08At].numCriticalJsons2BDone=2;
+	gl[gl.upper08At].numCriticalJsons2BDone=2;
+	gl[gl.lower08At].numCriticalTextures2BDone=1;
+	gl[gl.upper08At].numCriticalTextures2BDone=1;
+	gl[gl.lower08At].numSecondaryJsons2BDone=2;
+	gl[gl.upper08At].numSecondaryJsons2BDone=2;
+	gl[gl.lower08At].numSecondaryTextures2BDone=4;
+	gl[gl.upper08At].numSecondaryTextures2BDone=4;
+	initTextures(true);
+	loadSphere();
+	loadTeapot();
+//	loadFont();
+	//genSquares();
 	
-	gl.at=gl.lower08At;
-	initShaders08();
-	gl.at=gl.upper08At;
-	initShaders08();
-	
-	customizeGL08();/* uniforms are set in this, so must come after initShaders */
-	
+	gl.at=gl.lower08At;	initShaders();
+	gl.at=gl.upper08At;	initShaders();
+	customizeGL08();	
 	tick08();
 }
-function customizeGL08() {
-	/**/AL("customizeGL08");
+function initShaders() {
+	var   vertexShader = getShader(  "vertex-shader4");/* getShader uses gl.at */
+	var fragmentShader = getShader("fragment-shader3");/* getShader uses gl.at */
 	
-	gl.rotationDegrees08=0.;
-	gl.animationCount08=0;
-	gl.animationHalt08=false;
-	gl.animationHaltAt08=-1; /* negative never stops (till rollover post 4 billion). */
-	gl.constructHalt08=true;
-	gl.constructAt08=0;
-	gl.constructHaltAt08=-1;
-	gl.constructHalt082=true;
-	gl.constructAt082=0;
-	gl.constructHaltAt082=-1;
-	//gl.animationHaltAt08=20;
-	gl.lastTime08 = 0;
-	gl.sayOnce08=false;
-	gl.talkon08=false;
-	gl.talkon08=true;
-	gl.RPM = 10.;
-	gl.shininess08=5.;
-	
-	gl[gl.lower08At].lighting           = true;
-	gl[gl.lower08At].directionalLight   = true;
-	gl[gl.lower08At].pointLight         = false;
-	gl[gl.lower08At].materials          = true;
-	gl[gl.lower08At].specularHighlights = true;
-	gl[gl.lower08At].negativeDiffuse    = true;
-	gl[gl.lower08At].ambientLightRGB             = vec3.createFrom(0.2,0.2,0.2);
-	gl[gl.lower08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
-	gl[gl.lower08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
-	gl[gl.lower08At].pointLightXYZ = vec3.createFrom(  0.0,  6.0,  1.0);                  //AL(vec3.printS3(gl[gl.lower08At].pointLightXYZ)      +" initial gl[gl.lower08At].pointLightXYZ");
-	gl[gl.lower08At].pointLightSpriteXYZ = gl[gl.lower08At].createBuffer(); /* the buffer for the white emissive dot that flies around */
-	gl[gl.lower08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
-	gl[gl.lower08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
-	
-	if(0==gl.lower08At){
-		var slider = selection = $( "#directionalLightXYZSlider").slider( "value" );
-		var angle= Math.PI*(100-slider)/100.;
-		gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-.3,Math.sin(angle));//AL(vec3.printS3(gl[gl.lower08At].directionalLightXYZ)+" initial directionalLightXYZ");
-		gl[gl.upper08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-.3,Math.sin(angle));//AL(vec3.printS3(gl[gl.upper08At].directionalLightXYZ)+" initial directionalLightXYZ");
-		
-	} else {
-		gl[gl.lower08At].directionalLightXYZ         = vec3.createFrom(0.0,0.0,1.0);
-		gl[gl.upper08At].directionalLightXYZ         = vec3.createFrom(0.0,0.0,1.0);
-	}
-	
-	gl[gl.upper08At].lighting           = true;
-	gl[gl.upper08At].directionalLight   = true;
-	gl[gl.upper08At].pointLight         = false;
-	gl[gl.upper08At].materials          = true;
-	gl[gl.upper08At].specularHighlights = true;
-	gl[gl.upper08At].negativeDiffuse    = true;
-	gl[gl.upper08At].ambientLightRGB             = vec3.createFrom(0.2,0.2,0.2);
-	gl[gl.upper08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
-	gl[gl.upper08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
-	gl[gl.upper08At].pointLightXYZ = vec3.createFrom(  0.0,  6.0,  1.0);                  //AL(vec3.printS3(gl[gl.lower08At].pointLightXYZ)      +" initial gl[gl.lower08At].pointLightXYZ");
-	gl[gl.upper08At].pointLightSpriteXYZ = gl[gl.upper08At].createBuffer(); /* the buffer for the white emissive dot that flies around */
-	gl[gl.upper08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
-	gl[gl.upper08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
-	
-	for(gl.at=gl.lower08At;gl.at<=gl.upper08At;gl.at++){
-		if(0==gl.lower08At){
-			gl[gl.at].clearColor(0.5, 0.5, 0.5, 1.0);
-		} else {
-			gl[gl.at].clearColor(0.0, 0.0, 0.0, 1.0);
-		}
-		gl[gl.at].enable   (gl.DEPTH_TEST);
-		gl[gl.at].frontFace(gl.CCW); 
-		gl[gl.at].cullFace (gl.BACK); 
-		if(null != document.getElementById('setCullFace')){
-			//AL("setting CULL_FACE from null!=setCullFace");
-			gl[gl.at].enable(gl.CULL_FACE);
-			document.getElementById("cullFaces").value=" Enable CullFace ";
-		} else {
-			//AL("disabling CULL_FACE");
-			gl[gl.at].disable(gl.CULL_FACE);
-		}
-		//gl[gl.at].jsonsDone=true;
-		gl[gl.at].texturesDone=true;
-		
-	}
-	
-	
-	/*********************************************/
-	//AL("setting homes");
-	gl.at=gl.lower08At;
-	//xyzprySetInDegrees(   0, -13,   0,  0,  0, 90);   /* 13 units South, flat and level (roof is up),  facing North */
-	/* the teapot can be viewed from 43 units away */
-	//xyzprySetInDegrees(   0, -43,   0,  0,  0, 90);   /* 13 units South, flat and level (roof is up),  facing North */
-	//xyzprySetInDegrees(   0,  0 ,  13,-90,  0, 90);   /* 13 units Up, pointing straight down,(roof is north) */
-	xyzprySetInDegrees(   0,  2, 2.657,-90,  0, 90);
-	xyzprySet2Home0();	
-	if(0==gl.lower08At){
-		xyzprySetInDegrees(   0,  6, 18.125,-90,  0, 90);
-	} else {
-		xyzprySetInDegrees(   1,  6, 18.125,-90,  0, 90);
-	}
-	xyzprySet2Home();
-	gl[gl.at].deltaMove=1./8;
-	
-	/*********************************************/
-	
-	gl.at=gl.upper08At;
-	xyzprySetInDegrees(  -4., -2.666,0.447,-9.141,  0, 90);
-	xyzprySet2Home0();
-	if(1==gl.upper08At){
-		//xyzprySetInDegrees(   0,  -15,  8.5, -21.445,  0,90);    /* 13 units North, flat and level (roof is up), facing South */
-		//xyzprySetInDegrees(   0,  -30.,  0., 0.,  0.,90.);
-		xyzprySetInDegrees(   0,  -4.,  0., 0.,  0.,90.);
-	} else {
-		xyzprySetInDegrees(   1,  6, 18.125,-90,  0, 90);
-	}
-	xyzprySet2Home();
-	//AL("case1");
-	gl[gl.at].deltaMove=1./8;
-	/*********************************************/
-	//AL("set home");
-	gl.at=gl.lower08At;
-	//xyzpryLogView();
-	gl.at=gl.upper08At;
-	//xyzpryLogView();
- 	
-	setAmbientUniforms (gl.lower08At);
-	setDirectionalLight(gl.lower08At);
-	setPointLight      (gl.lower08At);
-	
-	setAmbientUniforms (gl.upper08At);
-	setDirectionalLight(gl.upper08At);
-	setPointLight      (gl.upper08At);
-	
-	setCheckMarks();
-}
-
-function initShaders08() {
-	var   vertexShader = getShader(  "vertex-shader3");
-	var fragmentShader = getShader("fragment-shader2");
-	
+	gl.textureSay=false;
 	gl[gl.at].shaderProgram = gl[gl.at].createProgram();
 	gl[gl.at].attachShader(gl[gl.at].shaderProgram,  vertexShader);
 	gl[gl.at].attachShader(gl[gl.at].shaderProgram, fragmentShader);
@@ -176,25 +48,31 @@ function initShaders08() {
 	
 	gl[gl.at].paXYZ          = gl[gl.at].getAttribLocation(gl[gl.at].shaderProgram,"aXYZ"         );
 	gl[gl.at].paNormal       = gl[gl.at].getAttribLocation(gl[gl.at].shaderProgram,"aNormal"      );
+	gl[gl.at].paTextureCoord = gl[gl.at].getAttribLocation(gl[gl.at].shaderProgram,"aTextureCoord");
 	gl[gl.at].enableVertexAttribArray(gl[gl.at].paXYZ);
 	gl[gl.at].enableVertexAttribArray(gl[gl.at].paNormal);
+	gl[gl.at].enableVertexAttribArray(gl[gl.at].paTextureCoord);
 	
 	gl[gl.at].puPerspectiveMatrix      = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uPerspectiveMatrix"      );
 	gl[gl.at].puMvm                    = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uMvm"                    );
 	gl[gl.at].puNormal                 = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uNormal"                 );
+	gl[gl.at].puSampler                = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uSampler"                );
 
-	gl[gl.at].puUseLighting            = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseLighting"            );
-	gl[gl.at].puUseDirectionalLight    = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseDirectionalLight"    );
-	gl[gl.at].puUsePointLight          = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUsePointLight"          );
 	gl[gl.at].puShowSpecularHighlights = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uShowSpecularHighlights" );
 	gl[gl.at].puShowNegativeDiffuse    = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uShowNegativeDiffuse"    );
+	gl[gl.at].puUseTextures            = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseTextures"            );
 
+	gl[gl.at].puUseFullEmissivity      = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseFullEmissivity"      );
+
+	gl[gl.at].puUseLighting            = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseLighting"            );
 	gl[gl.at].puAmbientLightRGB        = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uAmbientLightRGB"        );
-
-	gl[gl.at].puDirectionalLightXYZ         = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uDirectionalLightXYZ"        );
-	gl[gl.at].puDirectionalLightSpecularRGB = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uDirectionalLightSpecularRGB");
-	gl[gl.at].puDirectionalLightDiffuseRGB  = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uDirectionalLightDiffuseRGB" );
 	
+	gl[gl.at].puUseDirectionalLight         = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUseDirectionalLight"    );	
+	gl[gl.at].puDirectionalLightXYZ         = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uDirectionalLightXYZ"        );
+	gl[gl.at].puDirectionalLightSpecularRGB = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uDirectionalLightSpecularRGB");
+	gl[gl.at].puDirectionalLightDiffuseRGB  = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uDirectionalLightDiffuseRGB" );
+	
+	gl[gl.at].puUsePointLight          = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uUsePointLight"          );	
 	gl[gl.at].puPointLightXYZ          = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uPointLightXYZ"          );
 	gl[gl.at].puPointLightSpecularRGB  = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uPointLightSpecularRGB"  );
 	gl[gl.at].puPointLightDiffuseRGB   = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram,"uPointLightDiffuseRGB"   );
@@ -203,351 +81,451 @@ function initShaders08() {
 	gl[gl.at].puMaterialSpecularRGB    = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uMaterialSpecularRGB"   );
 	gl[gl.at].puMaterialDiffuseRGB     = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uMaterialDiffuseRGB"    );
 	gl[gl.at].puMaterialShininess      = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uMaterialShininess"     );
-	gl[gl.at].puMaterialEmissiveRGB    = gl[gl.at].getUniformLocation(gl[gl.at].shaderProgram, "uMaterialEmissiveRGB"   );
 }
 
-function loadFacetedSphere08(isLastJson) {
-	//AL("cme@ loadFacetedSphere gl.animationCount08="+gl.animationCount08);
-	var requestA = new XMLHttpRequest();
-//	requestA.open("GET", "json/Spheres/IcosahedralSphere20.json");
-//	requestA.open("GET", "json/Spheres/IcosahedralSphere80.json");
-//	requestA.open("GET", "json/Spheres/IcosahedralSphere320.json");
-//	requestA.open("GET", "json/Spheres/IcosahedralSphere1280.json");
-	requestA.open("GET", "json/Spheres/IcosahedralSphere5120.json");
-	requestA.onreadystatechange = function () {
-		if (requestA.readyState == 4) {
-			//AL("A inside loadSphere requestgl.animationCount08="+gl.animationCount08+" "+gl.lower08At);
-			//AL("requestA.responseText="+requestA.responseText);
-			var sayVarList = false;
-			//sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(requestA.responseText,(sayVarList?jsonReviverVarList:null));
-			handleLoadedStripSphere(parsedJson,gl[gl.lower08At],gl.lower08At);
-			//AL("B inside loadSphere requestgl.animationCount08="+gl.animationCount08);
-			handleLoadedStripSphere(parsedJson,gl[gl.upper08At],gl.upper08At);
-			elem=document.getElementById("loadingtext");
-			if(null!=elem)elem.textContent = "";
-			if(isLastJson){
-				gl[gl.lower08At].jsonsDone=true;
-				gl[gl.upper08At].jsonsDone=true;
-				//AL("gl["+gl.at+"].jsonsDone="+(gl[gl.at].jsonsDone?"true":"false"));
-			}
+function customizeGL08() {
+	//AL("customizeGL08");
+	//gl[gl.lower08At].texture="galvanized";
+	//gl[gl.upper08At].texture="galvanized";
+	//gl[gl.lower08At].shape="teapot";
+	//gl[gl.upper08At].shape="teapot";
+	gl[gl.lower08At].texture="earth";
+	gl[gl.upper08At].texture="earth";
+	gl[gl.lower08At].shape="sphere";
+	gl[gl.upper08At].shape=(0==gl.lower08At?"sphere":"teapot");
+	
+	gl.rotationDegrees08=0.;
+	
+	gl.animationHalt08=false;
+	gl.animationHaltAt08=-1; /* negative never stops (till rollover post 4 billion). */
+	gl.constructHalt08=true;
+	gl.constructAt08=0;
+	gl.constructHaltAt08=-1;
+	gl.constructHalt082=true;
+	gl.constructAt082=0;
+	gl.constructHaltAt082=-1;
+	gl.rotationSpeedFactor=1.;
+	//gl.animationHaltAt08=20;
+	gl.lastTime08 = 0;
+	gl.sayOnce08=false;
+	gl.talkon08=false;
+	gl.talkon08=true;
+	gl.RPM = 10.;
+	gl.shininess08=5.;
+	
+	gl[gl.lower08At].lighting           = true;
+	gl[gl.lower08At].directionalLight   = true;
+	gl[gl.lower08At].pointLight         = true;
+	gl[gl.lower08At].materials          = false;
+	gl[gl.lower08At].specularHighlights = true;
+	gl[gl.lower08At].negativeDiffuse    = true;
+	gl[gl.lower08At].ambientLightRGB             = vec3.createFrom(0.2,0.2,0.2);
+	gl[gl.lower08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
+	gl[gl.lower08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
+	gl[gl.lower08At].pointLightXYZ = vec3.createFrom(  0.0,  6.0,  1.0);                  //AL(vec3.printS3(gl[gl.lower08At].pointLightXYZ)      +" initial gl[gl.lower08At].pointLightXYZ");
+	gl[gl.lower08At].pointLightSpriteXYZ = gl[gl.lower08At].createBuffer(); /* the buffer for the white emissive dot that flies around */
+	gl[gl.lower08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
+	gl[gl.lower08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
+	gl[gl.lower08At].showLines=false;
+	
+	//AL("pre directional");
+	if(0==gl.lower08At){
+		var slider = selection = $("#directionalLightXYZSlider").slider( "value" );
+		var angle= Math.PI*(100-slider)/100.;
+		//gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-.3,Math.sin(angle));//AL(vec3.printS3(gl[gl.lower08At].directionalLightXYZ)+" initial directionalLightXYZ");
+		//gl[gl.upper08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-.3,Math.sin(angle));//AL(vec3.printS3(gl[gl.upper08At].directionalLightXYZ)+" initial directionalLightXYZ");
+		gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-Math.sin(angle),0.);//AL(vec3.printS3(gl[gl.lower08At].directionalLightXYZ)+" initial directionalLightXYZ");
+		gl[gl.upper08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-Math.sin(angle),0.);//AL(vec3.printS3(gl[gl.upper08At].directionalLightXYZ)+" initial directionalLightXYZ");
+				
+	} else {
+		gl[gl.lower08At].directionalLightXYZ         = vec3.createFrom(0.0,0.0,1.0);
+		gl[gl.upper08At].directionalLightXYZ         = vec3.createFrom(0.0,0.0,1.0);
+	}
+	//AL("post directional");
+	
+	gl[gl.upper08At].lighting           = true;
+	gl[gl.upper08At].directionalLight   = true;
+	gl[gl.upper08At].pointLight         = true;
+	gl[gl.upper08At].materials          = false;
+	gl[gl.upper08At].specularHighlights = true;
+	gl[gl.upper08At].negativeDiffuse    = true;
+	gl[gl.upper08At].ambientLightRGB             = vec3.createFrom(0.2,0.2,0.2);
+	gl[gl.upper08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
+	gl[gl.upper08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
+	gl[gl.upper08At].pointLightXYZ = vec3.createFrom(  0.0,  6.0,  1.0);                  //AL(vec3.printS3(gl[gl.lower08At].pointLightXYZ)      +" initial gl[gl.lower08At].pointLightXYZ");
+	gl[gl.upper08At].pointLightSpriteXYZ = gl[gl.upper08At].createBuffer(); /* the buffer for the white emissive dot that flies around */
+	gl[gl.upper08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
+	gl[gl.upper08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
+	gl[gl.upper08At].showLines=false;
+	
+	for(gl.at=gl.lower08At;gl.at<=gl.upper08At;gl.at++){
+		if(0==gl.lower08At){
+			gl[gl.at].clearColor(0.5, 0.5, 0.5, 1.0);
+		} else {
+			gl[gl.at].clearColor(0.0, 0.0, 0.0, 1.0);
+		}
+		gl[gl.at].enable   (gl.DEPTH_TEST);
+		gl[gl.at].frontFace(gl.CCW); 
+		gl[gl.at].cullFace (gl.BACK); 
+		if(null != document.getElementById('cullFaces')){
+			//AL("setting CULL_FACE from null!=setCullFace");
+			document.getElementById("cullFaces").value=" Enable CullFace ";
+		} else {
+			//AL("disabling CULL_FACE");
+		}
+		gl[gl.at].disable(gl.CULL_FACE);
+		//gl[gl.at].jsonsDone=true;
+		//gl[gl.at].texturesDone=true;
+	}
+	/*********************************************/
+	//AL("setting homes");
+	gl.at=gl.lower08At;
+	//xyzprySetInDegrees(   0, -13,   0,  0,  0, 90);   /* 13 units South, flat and level (roof is up),  facing North */
+	/* the teapot can be viewed from 43 units away */
+	//xyzprySetInDegrees(   0, -43,   0,  0,  0, 90);   /* 13 units South, flat and level (roof is up),  facing North */
+	//xyzprySetInDegrees(   0,  0 ,  13,-90,  0, 90);   /* 13 units Up, pointing straight down,(roof is north) */
+	//xyzprySetInDegrees(   0,-30.4,13.6,-23,  0, 90);
+	xyzprySetInDegrees(   0,-32.,  0,  0,  0, 90);
+	xyzprySet2Home0();	
+	if(0==gl.lower08At){
+		//		xyzprySetInDegrees(   0,  6, 18.125,-90,  0, 90);
+		//xyzprySetInDegrees(   0,  0, 40,-90,  0, 90);
+		//xyzprySetInDegrees(   0,-40.,  0,  0,  0, 90);
+		//xyzprySetInDegrees(   0,-32.,  0,  0,  0, 90);
+		xyzprySetInDegrees(   0,-30.4,13.6,-23,  0, 90);
+	} else {
+		//		xyzprySetInDegrees(   1,  6, 18.125,-90,  0, 90);
+		//xyzprySetInDegrees(   0,  0, 40,-90,  0, 90);
+		//xyzprySetInDegrees(   0, 40,  0,  0,  0,270);
+		xyzprySetInDegrees(   0, -25.878, 11.137,  -23,  0,90); /* fills most of the square for the webGLTutorials url */
+	}
+	xyzprySet2Home();
+	gl[gl.at].deltaMove=1./8;
+	gl[gl.at].deltaMove=1.;
+	//xyzpryLogView();	
+	gl.at=gl.upper08At;
+	//xyzprySetInDegrees(  0.,30.4,13.6,-23.,  0,270);
+	xyzprySetInDegrees(   0,32.,  0,  0,  0,270);
+	xyzprySet2Home0();
+	if(1==gl.upper08At){
+		//xyzprySetInDegrees(   0,  -15,  8.5, -21.445,  0,90);    /* 13 units North, flat and level (roof is up), facing South */
+		//xyzprySetInDegrees(   0,  -30.,  0., 0.,  0.,90.);
+		//yzprySetInDegrees(   0,  -4.,  0., 0.,  0.,90.);
+		//xyzprySetInDegrees(   0,  0, 40,-90,  0, 90);
+		//xyzprySetInDegrees(   0, 40,  0,  0,  0,270);
+		//xyzprySetInDegrees(   0.262,32.272,23.202,-36.534,-6.006,270);
+		//xyzprySetInDegrees(   0,-40.,  0,  0,  0, 90);
+		//xyzprySetInDegrees(   0,32.,  0,  0,  0,270);
+		xyzprySetInDegrees(  0.,30.4,13.6,-23.,  0,270);
+		
+	} else {
+		//xyzprySetInDegrees(   1,  6, 18.125,-90,  0, 90);
+		xyzprySetInDegrees(   0, 40,  0,  0,  0,270);
+	}
+	xyzprySet2Home();
+	//xyzpryLogView();
+	gl[gl.at].deltaMove=1./8;
+	gl[gl.at].deltaMove=1.;
+	/*********************************************/
+
+	setAmbientUniforms (gl.lower08At);
+	setDirectionalLight(gl.lower08At);
+	setPointLight      (gl.lower08At);
+	
+	setAmbientUniforms (gl.upper08At);
+	setDirectionalLight(gl.upper08At);
+	setPointLight      (gl.upper08At);
+	
+	setGLMaterial(gl.lower08At,999);
+	setGLMaterial(gl.upper08At,999);
+	
+	setCheckMarks();
+/*	gl[gl.at].uniform1i(gl[gl.at].puUseANormal            ,gl[gl.at].aNormal); */
+	gl[gl.at].uniform1i(gl[gl.at].puUseLighting           ,gl[gl.at].lighting);
+	gl[gl.at].uniform1i(gl[gl.at].puUseDirectionalLight   ,gl[gl.at].directionalLight);
+	gl[gl.at].uniform1i(gl[gl.at].puUsePointLight         ,gl[gl.at].pointLight);
+	gl[gl.at].uniform1i(gl[gl.at].puShowSpecularHighlights,gl[gl.at].specularHighlights);
+	gl[gl.at].uniform1i(gl[gl.at].puShowNegativeDiffuse   ,gl[gl.at].negativeDiffuse);
+	
+	var elem = document.getElementById("xyzpry0");
+	if(null!=elem)elem.innerHTML=xyzpryPrint();	
+	var elem = document.getElementById("xyzpry1");
+	if(null!=elem)elem.innerHTML=xyzpryPrint();
+	//AL("did make it to bottom of customize08");
+}
+
+function initTextures(critical) {
+	//AL("cme& initTextures()");
+	if(critical){
+		gl[gl.lower08At].earthTexture = gl[gl.lower08At].createTexture();
+		gl[gl.upper08At].earthTexture = gl[gl.upper08At].createTexture();
+		var earthImage = new Image();
+		earthImage.src = "images/textures/world.topo.bathy.200407.3x"+(0==gl.lower08At?"4096x2048_B35":"256x128_B50")+".jpg";
+		earthImage.onload = function () {
+			handleLoadedTexture(gl[gl.lower08At].earthTexture,gl.lower08At,earthImage);
+			gl[gl.lower08At].numCriticalTexturesDone++;
+			handleLoadedTexture(gl[gl.upper08At].earthTexture,gl.upper08At,earthImage);
+			gl[gl.upper08At].numCriticalTexturesDone++;
+			//AL("got earth texture");
+		};
+	} else
+	if(0==gl.lower08At){ /* when we are doing the small show for the webGLTorials, no need for secondary textures */
+		gl[gl.lower08At].neheTexture = gl[gl.lower08At].createTexture();
+		gl[gl.upper08At].neheTexture = gl[gl.upper08At].createTexture();
+		var neheImage = new Image();
+		neheImage.src = "images/textures/nehe.gif";
+		neheImage.onload = function () {
+			handleLoadedTexture(gl[gl.lower08At].neheTexture,gl.lower08At,neheImage);
+			gl[gl.lower08At].numSecondaryTexturesDone++;
+			handleLoadedTexture(gl[gl.upper08At].neheTexture,gl.upper08At,neheImage);
+			gl[gl.upper08At].numSecondaryTexturesDone++;
+		};
+		
+		gl[gl.lower08At].glassTexture = gl[gl.lower08At].createTexture();
+		gl[gl.upper08At].glassTexture = gl[gl.upper08At].createTexture();
+		var glassImage = new Image();
+		glassImage.src = "images/textures/glass.gif";
+		glassImage.onload = function () {
+			handleLoadedTexture(gl[gl.lower08At].glassTexture,gl.lower08At,glassImage);
+			gl[gl.lower08At].numSecondaryTexturesDone++;
+			handleLoadedTexture(gl[gl.upper08At].glassTexture,gl.upper08At,glassImage);
+			gl[gl.upper08At].numSecondaryTexturesDone++;
+		};
+		
+		gl[gl.lower08At].tahomaTexture = gl[gl.lower08At].createTexture();
+		gl[gl.upper08At].tahomaTexture = gl[gl.upper08At].createTexture();
+		var tahomaImage = new Image();
+		tahomaImage.src = "images/textures/Font_Var_Part_1024_TAHOMA_400_121.png";
+		tahomaImage.onload = function () {
+			handleLoadedTexture(gl[gl.lower08At].tahomaTexture,gl.lower08At,tahomaImage);
+			gl[gl.lower08At].numSecondaryTexturesDone++;
+			handleLoadedTexture(gl[gl.upper08At].tahomaTexture,gl.upper08At,tahomaImage);
+			gl[gl.upper08At].numSecondaryTexturesDone++;
+		};
+		
+		gl[gl.lower08At].galvanizedTexture = gl[gl.lower08At].createTexture();
+		gl[gl.upper08At].galvanizedTexture = gl[gl.upper08At].createTexture();
+		var galvanizedImage = new Image();
+		galvanizedImage.src = "images/textures/arroway.de_metal+structure+06_d100_flat.jpg";
+		galvanizedImage.onload = function () {
+			handleLoadedTexture(gl[gl.lower08At].galvanizedTexture,gl.lower08At,galvanizedImage);
+			gl[gl.lower08At].numSecondaryTexturesDone++;
+			handleLoadedTexture(gl[gl.upper08At].galvanizedTexture,gl.upper08At,galvanizedImage);
+			gl[gl.upper08At].numSecondaryTexturesDone++;
+		};
+	}	
+}
+
+function handleLoadedTexture(texture,at,image) {
+	//AL("handleLoadedTexture gl.animationCount08="+gl.animationCount08+" at="+at);
+	gl[at].pixelStorei   (gl.UNPACK_FLIP_Y_WEBGL, true);
+	gl[at].bindTexture   (gl.TEXTURE_2D, texture);
+	//if(0==at)AL("image.width,height="+texture.image.width+","+texture.image.height);
+//	gl[at].texImage2D    (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+	gl[at].texImage2D    (gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+	gl[at].texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+	gl[at].texParameteri (gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+	gl[at].generateMipmap(gl.TEXTURE_2D);
+	gl[at].bindTexture   (gl.TEXTURE_2D, null);
+}
+
+function loadTeapot() {
+	//AL("cme@ loadTeapot gl.animationCount08="+gl.animationCount08);
+	var request = new XMLHttpRequest();
+	//request.open("GET", "json/Teapot/GitHubTeapot.json"); /* lid too small */
+	//request.open("GET", "json/Teapot/SmallLidTeapot.json");
+	//request.open("GET", "json/Teapot/TeapotNEF.json");
+	//request.open("GET", "json/Teapot/TeapotNEFT.json"); /* lid too small */
+	//request.open("GET", "json/Teapot/WebGLMMOTeapot.json");
+	
+	request.open("GET", "json/Teapot/Teapot.json");
+	request.onreadystatechange = function () {
+		if (request.readyState == 4) {
+			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount08));
+			//gl.sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
+			handleLoadedTeapot(parsedJson,gl.lower08At);gl[gl.lower08At].numCriticalJsonsDone++;
+			handleLoadedTeapot(parsedJson,gl.upper08At);gl[gl.upper08At].numCriticalJsonsDone++;
+			//AL("got teapot json "+gl[gl.lower08At].numCriticalJsonsDone+" "+gl[gl.upper08At].numCriticalJsonsDone );
 		}
 	};
-	//AL("about to request.send()");
-	requestA.send();
-	//AL("back from request.send()");
+	//AL(sprintf("%3d loadTeapot() pre  requedt.send()",gl.animationCount08));
+	request.send();
+	//AL(sprintf("%3d loadTeapot() post requedt.send()",gl.animationCount08));
 }
-function handleLoadedStripSphere(parsedJson,glSubAt,at) {
-	//AL("cme@ handleLoadedSphere( with gl.at="+at+")");
-	var sayAVar = false; /* toggle for the console output of a variable */
+function loadFont() {
+	//AL("cme@ loadTeapot gl.animationCount08="+gl.animationCount08);
+	var request = new XMLHttpRequest();
+	//request.open("GET", "json/Teapot/GitHubTeapot.json"); /* lid too small */
+	//request.open("GET", "json/Teapot/SmallLidTeapot.json");
+	//request.open("GET", "json/Teapot/TeapotNEF.json");
+	//request.open("GET", "json/Teapot/TeapotNEFT.json"); /* lid too small */
+	//request.open("GET", "json/Teapot/WebGLMMOTeapot.json");
 	
-	gl[at].sphereTrianglesFaceXYZs = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereTrianglesFaceXYZs);
-	for(var ii=0;ii<parsedJson.trianglesFaceXYZs.length;ii++){
-		parsedJson.trianglesFaceXYZs[ii]*=.95;
-	}
-	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(parsedJson.trianglesFaceXYZs), gl.STATIC_DRAW);
-	gl[at].sphereTrianglesFaceXYZs.itemSize = 3;
-	gl[at].sphereTrianglesFaceXYZs.numItems = parsedJson.trianglesFaceXYZs.length / gl[at].sphereTrianglesFaceXYZs.itemSize;
+	request.open("GET", "json/Fonts/Font_1024_Var_Part_TAHOMA_400_121.json");
+	request.onreadystatechange = function () {
+		if (request.readyState == 4) {
+			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount08));
+			/**/gl.sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
 
+			//AL("got teapot json "+gl[gl.lower08At].numCriticalJsonsDone+" "+gl[gl.upper08At].numCriticalJsonsDone );
+		}
+	};
+	//AL(sprintf("%3d loadTeapot() pre  requedt.send()",gl.animationCount08));
+	request.send();
+	//AL(sprintf("%3d loadTeapot() post requedt.send()",gl.animationCount08));
+}
+//TODO put a blue mark here
+function handleLoadedTeapot(teapotData,at) {
+	/* if this messes up try running the JSON.parse(request.responseText,jsonReviverVarList):   This will put the variable list on the console */
+	//AL(sprintf("handelLoadedTeapot(at=%d) teapotData.vertexTextureCoordinates.length=%d",at,teapotData.vertexTextureCoords.length));
+	
+	gl[at].teapotXYZs = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotXYZs);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexXYZs), gl.STATIC_DRAW);
+	gl[at].teapotXYZs.itemSize = 3;
+	gl[at].teapotXYZs.numItems = teapotData.vertexXYZs.length / gl[at].teapotXYZs.itemSize;
+	
+	gl[at].teapotNormals = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotNormals);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexNormals), gl.STATIC_DRAW);
+	gl[at].teapotNormals.itemSize = 3;
+	gl[at].teapotNormals.numItems = teapotData.vertexNormals.length / gl[at].teapotNormals.itemSize;
+	
+	gl[at].teapotTextureCoords = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotTextureCoords);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexTextureCoords), gl.STATIC_DRAW);
+	gl[at].teapotTextureCoords.itemSize = 2;
+	gl[at].teapotTextureCoords.numItems = teapotData.vertexTextureCoords.length / gl[at].teapotTextureCoords.itemSize;
 
-	gl[at].sphereTrianglesFaceNormals = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereTrianglesFaceNormals);
-	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(parsedJson.trianglesFaceNormals), gl.STATIC_DRAW);
-	gl[at].sphereTrianglesFaceNormals.itemSize = 3;
-	gl[at].sphereTrianglesFaceNormals.numItems = parsedJson.trianglesFaceNormals.length / gl[at].sphereTrianglesFaceNormals.itemSize;
+	gl[at].teapotIndices = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].teapotIndices);
+	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(teapotData.trianglesIndices), gl.STATIC_DRAW);
+	gl[at].teapotIndices.itemSize = 1;
+	gl[at].teapotIndices.numItems = teapotData.trianglesIndices.length / gl[at].teapotIndices.itemSize;
+}
+function loadSphere() {
+	//AL("cme@ loadSphere gl.animationCount08="+gl.animationCount08);
+	var request = new XMLHttpRequest();
+	//request.open("GET", "json/Spheres/IcosahedralSphere5120.json");
+	request.open("GET", "json/Spheres/IcosahedralSphere20480.json");
+	request.onreadystatechange = function () {
+		if (request.readyState == 4) {
+			//AL(sprintf("%3d loadSphere() request readyState==4",gl.animationCount08));
+			//gl.sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
+			handleLoadedSphereNormals(parsedJson,gl.lower08At);
+			handleLoadedSphereNormals(parsedJson,gl.upper08At);
+			handleLoadedSphere(parsedJson,gl.lower08At);gl[gl.lower08At].numCriticalJsonsDone++;
+			handleLoadedSphere(parsedJson,gl.upper08At);gl[gl.upper08At].numCriticalJsonsDone++;
+			//AL("got sphere json "+gl[gl.lower08At].numCriticalJsonsDone+" "+gl[gl.upper08At].numCriticalJsonsDone );
+		}
+	};
+	//AL(sprintf("%3d loadSphere() pre  requedt.send()",gl.animationCount08));
+	request.send();
+	//AL(sprintf("%3d loadSphere() post requedt.send()",gl.animationCount08));
+}
+function handleLoadedSphereNormals(SphereData,at) {
+	/* if this messes up try running the JSON.parse(request.responseText,jsonReviverVarList):   This will put the variable list on the console */
+	//AL(sprintf("handelLoadedSphere(at=%d) SphereData.XYZs.length=%d",at,SphereData.XYZs.length));
+	                                   gl[at].sphereNormals = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereNormals);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(SphereData.XYZs), gl.STATIC_DRAW);
+	gl[at].sphereNormals.itemSize = 3;
+	gl[at].sphereNormals.numItems = SphereData.XYZs.length / gl[at].sphereNormals.itemSize;
+	//AL("numItems="+gl[at].sphereNormals.numItems);
+}
+function handleLoadedSphere(SphereData,at) {
+	/* if this messes up try running the JSON.parse(request.responseText,jsonReviverVarList):   This will put the variable list on the console */
+	//AL(sprintf("handelLoadedSphere(at=%d) SphereData.vertexTextureCoordinates.length=%d",at,SphereData.vertexTextureCoords.length));
 	
-	gl[at].sphereTrianglesFaceIndices = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].sphereTrianglesFaceIndices);
-	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(parsedJson.trianglesFaceIndices), gl.STATIC_DRAW);
-	gl[at].sphereTrianglesFaceIndices.itemSize = 1;
-	gl[at].sphereTrianglesFaceIndices.numItems = parsedJson.trianglesFaceIndices.length / gl[at].sphereTrianglesFaceIndices.itemSize;
-	gl.constructAt082=gl[at].sphereTrianglesFaceIndices.numItems;
-	
-	//sayAVar=true;
-	if(  (0==at)
-	   &&(true==sayAVar)
-	  ){
-		AL("parsedJson.trianglesFaceXYZs [0]="+parsedJson.trianglesFaceXYZs [0]);
-		AL("parsedJson.trianglesFaceNormals[0]="+parsedJson.trianglesFaceNormals[0]);
-		AL("going for "+(gl[at].sphereTrianglesFaceXYZs.length / 3) +" points");
-		AL("          X      Y      Z     |   U      V      W  |");
-		for(var ii=0;ii<gl[at].sphereTrianglesFaceXYZs.numItems;ii++){
-			//AL("going for ii="+ii);
-			r=Math.sqrt( (parsedJson.trianglesFaceNormals[(3*ii)+ 0]*parsedJson.trianglesFaceNormals[(3*ii)+ 0])
-			            +(parsedJson.trianglesFaceNormals[(3*ii)+ 1]*parsedJson.trianglesFaceNormals[(3*ii)+ 1])
-			            +(parsedJson.trianglesFaceNormals[(3*ii)+ 2]*parsedJson.trianglesFaceNormals[(3*ii)+ 2])
-			           );
-			AL(sprintf("%2d %d %2d (%6.3f,%6.3f,%6.3f) (%6.3f,%6.3f,%6.3f) %5.3f %s"
-				,Math.floor(ii/3)
-				,ii%3
-				,ii	
-				,parsedJson.trianglesFaceXYZs [(3*ii)+ 0]
-				,parsedJson.trianglesFaceXYZs [(3*ii)+ 1]
-				,parsedJson.trianglesFaceXYZs [(3*ii)+ 2]
-				,parsedJson.trianglesFaceNormals[(3*ii)+ 0]
-				,parsedJson.trianglesFaceNormals[(3*ii)+ 1]
-				,parsedJson.trianglesFaceNormals[(3*ii)+ 2]
-				,r
-				,2==ii%3?"\n":""
-			));
+	gl[at].sphereXYZs = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereXYZs);
+	//AL("SphereData.XYZs.length="+SphereData.XYZs.length);
+	if(at==gl.lower08At){
+		for(var ii=0;ii<SphereData.XYZs.length;ii++){
+			SphereData.XYZs[ii]*=10.;
 		}
 	}
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(SphereData.XYZs), gl.STATIC_DRAW);
+	gl[at].sphereXYZs.itemSize = 3;
+	gl[at].sphereXYZs.numItems = SphereData.XYZs.length / gl[at].sphereXYZs.itemSize;
+	//AL("gl["+at+"]sphereXYZs.itemSize="+gl[at].sphereXYZs.itemSize);
 	
-	gl[at].sphereStripVertexXYZs = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereStripVertexXYZs);
-	gl[at].bufferData(gl.ARRAY_BUFFER, new  Float32Array(parsedJson.stripVertexXYZs), gl.STATIC_DRAW);
-	gl[at].sphereStripVertexXYZs.itemSize = 3;
-	gl[at].sphereStripVertexXYZs.numItems = parsedJson.stripVertexXYZs.length / gl[at].sphereStripVertexXYZs.itemSize;
-	//sayAVar=true;
-	if(  (0==at)
-	   &&(true==sayAVar)
-	  ){
-		/* AL("parsedJson.stripVertexXYZs[0]="+parsedJson.stripVertexXYZs [0]); */
-		AL("going for "+gl[at].sphereStripVertexXYZs.numItems +" points");
-		AL("          X      Y      Z  ");
-		for(var ii=0;ii<gl[at].sphereStripVertexXYZs.numItems;ii++){
-			//AL("going for ii="+ii);
-			r=Math.sqrt( (parsedJson.stripVertexXYZs[(3*ii)+ 0]*parsedJson.stripVertexXYZs[(3*ii)+ 0])
-			            +(parsedJson.stripVertexXYZs[(3*ii)+ 1]*parsedJson.stripVertexXYZs[(3*ii)+ 1])
-			            +(parsedJson.stripVertexXYZs[(3*ii)+ 2]*parsedJson.stripVertexXYZs[(3*ii)+ 2])
-			           );
-			AL(sprintf("%2d %d %2d (%6.3f,%6.3f,%6.3f) %5.3f %s"
-				,Math.floor(ii/3)
-				,ii%3
-				,ii	
-				,parsedJson.stripVertexXYZs[(3*ii)+ 0]
-				,parsedJson.stripVertexXYZs[(3*ii)+ 1]
-				,parsedJson.stripVertexXYZs[(3*ii)+ 2]
-				,r
-				,2==ii%3?"\n":""
-			));
-		}
-	}
+	/* because I wanted to have a smooth, non-facited earth, (and because my xyz's needed to be 10X'ed to match the teapot), I set the normals into their own function */ 
+//	                                   gl[at].sphereNormals = gl[at].createBuffer();
+//	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereNormals);
+//	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(SphereData.trianglesNormals), gl.STATIC_DRAW);
+//	gl[at].sphereNormals.itemSize = 3;
+//	gl[at].sphereNormals.numItems = SphereData.trianglesNormals.length / gl[at].sphereNormals.itemSize;
 	
-	gl[at].sphereStripEdgeIndices = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].sphereStripEdgeIndices);
-	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(parsedJson.edgeStripIndices), gl.STATIC_DRAW);
-	gl[at].sphereStripEdgeIndices.itemSize = 1;
-	gl[at].sphereStripEdgeIndices.numItems = parsedJson.edgeStripIndices.length / gl[at].sphereStripEdgeIndices.itemSize;
+	                                   gl[at].sphereTextureCoords = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereTextureCoords);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(SphereData.trianglesUVs), gl.STATIC_DRAW);
+	gl[at].sphereTextureCoords.itemSize = 2;
+	gl[at].sphereTextureCoords.numItems = SphereData.trianglesUVs.length / gl[at].sphereTextureCoords.itemSize;
 	
-	gl[at].sphereStripFaceIndices = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].sphereStripFaceIndices);
-	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(parsedJson.faceStripIndices), gl.STATIC_DRAW);
-	gl[at].sphereStripFaceIndices.itemSize = 1;
-	gl[at].sphereStripFaceIndices.numItems = parsedJson.faceStripIndices.length / gl[at].sphereStripFaceIndices.itemSize;
-	gl.constructAt08=gl[at].sphereStripFaceIndices.numItems;
+	                                           gl[at].sphereIndices = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].sphereIndices);
+	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(SphereData.trianglesIndices), gl.STATIC_DRAW);
+	gl[at].sphereIndices.itemSize = 1;
+	gl[at].sphereIndices.numItems = SphereData.trianglesIndices.length / gl[at].sphereIndices.itemSize;
+
+	/* to allow the outlines of the triangles to be visible, they need to be a little bit higher than the earth surface */
+	gl[at].sphereLines = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].sphereLines);
+	//AL("SphereData.XYZs.length="+SphereData.XYZs.length);
+	var lines = [];
+	for(var ii=0;ii<SphereData.XYZs.length;ii++){
+		lines.push(SphereData.XYZs[ii]*1.01);
+	}	
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(lines), gl.STATIC_DRAW);
+	gl[at].sphereLines.itemSize = 3;
+	gl[at].sphereLines.numItems = SphereData.XYZs.length / gl[at].sphereLines.itemSize;
+	//AL("gl["+at+"]sphereLines.itemSize="+gl[at].sphereLines.itemSize);
 	
-	//AL("at end of handelJSON at="+at);
+                                               gl[at].sphereLineIndices = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].sphereLineIndices);
+	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(SphereData.linesIndices), gl.STATIC_DRAW);
+	gl[at].sphereLineIndices.itemSize = 1;
+	gl[at].sphereLineIndices.numItems = SphereData.linesIndices.length / gl[at].sphereLineIndices.itemSize;
+	//AL("sphereLineIndices.numItems="+gl[at].sphereLineIndices.numItems);
+	//AL("atEndOf handleLoadedSphere("+at+")");
+
 }
-function drawScene08() {
-	//if(true==gl.talkon08)AL(sprintf("drawScene08 with gl.at=%2d gl.animationCount08=%3d",gl.at,gl.animationCount08));
-	gl[gl.at].viewport(0, 0, gl[gl.at].viewportWidth, gl[gl.at].viewportHeight);
-	gl[gl.at].clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+function genSquares() {
+	/* Generate the squares which will act as the first placement locaitons for the letters */
+	//AL(sprintf("handelLoadedTeapot(at=%d) teapotData.vertexTextureCoordinates.length=%d",at,teapotData.vertexTextureCoords.length));
 	
-	//AL("gl.at="+gl.at);	
-	if (false === gl[gl.at].jsonsDone){
-		//AL("early return gl.at="+gl.at);
-		return;
-	}
-	//if(20==gl.animationCount08)AL(sprintf("drawScene08 past the nulls with gl.at=%2d gl.animationCount08=%3d",gl.at,gl.animationCount08));
+	gl[at].teapotXYZs = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotXYZs);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexXYZs), gl.STATIC_DRAW);
+	gl[at].teapotXYZs.itemSize = 3;
+	gl[at].teapotXYZs.numItems = teapotData.vertexXYZs.length / gl[at].teapotXYZs.itemSize;
 	
-	/**/if(20==gl.animationCount08)AL("gl.constructAt08="+gl.constructAt08);
-	mat4.perspective(45, gl[gl.at].viewportWidth / gl[gl.at].viewportHeight, 0.1, 100.0, gl[gl.at].perspectiveMatrix);
+	gl[at].teapotNormals = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotNormals);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexNormals), gl.STATIC_DRAW);
+	gl[at].teapotNormals.itemSize = 3;
+	gl[at].teapotNormals.numItems = teapotData.vertexNormals.length / gl[at].teapotNormals.itemSize;
+	
+	gl[at].teapotTextureCoords = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotTextureCoords);
+	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(teapotData.vertexTextureCoords), gl.STATIC_DRAW);
+	gl[at].teapotTextureCoords.itemSize = 2;
+	gl[at].teapotTextureCoords.numItems = teapotData.vertexTextureCoords.length / gl[at].teapotTextureCoords.itemSize;
 
-	//drawTeapot();  /* before un-commenting this, be sure to also uncomment the loadTeapot() function */
-
-	setMatrixUniforms08();
-	
-	var lightXYZ=vec3.create();
-	if(gl[gl.at].directionalLight){
-//		vec3.set(gl[gl.at].directionalLightXYZ,lightXYZ);
-//		vec3.scale(lightXYZ,1000000000.);
-//		mat4.multiplyVec3(gl[gl.at].mvm,lightXYZ);
-//		vec3.normalize(lightXYZ);
-//		//if(20==gl.animationCount08)AL(sprintf("gl[%d] gl[gl.at].directionalLightXYZ norm =%s",gl.at,vec3.printS3(lightXYZ)));
-//		gl[gl.at].uniform3fv(gl[gl.at].puDirectionalLightXYZ,lightXYZ);
-	} else {
-		/**/if(20==gl.animationCount08)AL("false == directionalLight08");
-	}
-	if(gl[gl.at].pointLight){
-		lightXYZ = vec3.createFrom(
-			     4*Math.cos(deg2Rad*gl.rotationDegrees08)
-			,6+ (4*Math.sin(deg2Rad*gl.rotationDegrees08))
-			,2+ (3*Math.sin(deg2Rad*gl.rotationDegrees08*3.))
-		);
-		gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].pointLightSpriteXYZ);
-		gl[gl.at].bufferData(gl.ARRAY_BUFFER, new Float32Array(lightXYZ), gl.STATIC_DRAW);
-		gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ , 3, gl.FLOAT, false, 0,  0);
-		
-		gl[gl.at].uniform3f(gl[gl.at].puMaterialEmissiveRGB,1.,1.,1.);
-		gl[gl.at].drawArrays(gl.POINTS, 0, 1);
-		gl[gl.at].uniform3f(gl[gl.at].puMaterialEmissiveRGB,0.,0.,0.);
-		
-		mat4.multiplyVec3(gl[gl.at].mvm,lightXYZ);
-		//if(20==gl.animationCount08)AL(sprintf("gl[%d] gl[gl.lower08At].pointLightXYZ norm =%s",gl.at,vec3.printS3(lightXYZ)));
-		gl[gl.at].uniform3fv(gl[gl.at].puPointLightXYZ,lightXYZ);
-	}
-
-
-	gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereStripVertexXYZs);
-	gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ   , gl[gl.at].sphereStripVertexXYZs.itemSize, gl.FLOAT, false, 0, 0);
-	gl[gl.at].vertexAttribPointer(gl[gl.at].paNormal, gl[gl.at].sphereStripVertexXYZs.itemSize, gl.FLOAT, false, 0, 0);
-	gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].sphereStripFaceIndices);
-	if((0==gl.at)&&20==gl.animationCount08){
-		AL(sprintf("@398 %5d %5d"
-			,gl[gl.at].sphereStripVertexXYZs   .numItems
-			,gl[gl.at].sphereStripFaceIndices  .numItems
-			)
-		);
-		AL(sprintf("@404 %5d %5d"
-			,gl[gl.at].sphereStripVertexXYZs   .itemSize
-			,gl[gl.at].sphereStripFaceIndices  .itemSize
-			)
-		);
-	}
-	
-	glPushMatrix();
-		mat4.translate(gl[gl.at].mvm, [-6, 0, 0]);
-		var counter=0;
-		for(var jj=0;jj<7;jj++){
-			for(var ii=0;ii<7;ii++){
-				if(  (0==gl.lower08At)	
-				   ||(  (0!=gl.lower08At)         /* show only the brass on left window on WegGLTutorials */
-				      &&(gl.at == gl.lower08At)
-				      &&(3==ii)
-				      &&(1==jj)
-				     )
-				   ||(  (0!=gl.lower08At)      /* show only the emerald on right small window on WegGLTutorials */
-				      &&(gl.at == gl.upper08At)
-				      &&(3==ii)
-				      &&(0==jj)
-				     )
-				  ){
-//			setGLMaterial(gl.at,gl[gl.at].materials?ii+(7*jj):999);
-					var color=ii+(7*jj);
-					switch(color){
-						case 0:
-							color=3;
-							break;
-						case 1:
-							color=4;
-							break;
-						case 2:
-							color=0;
-							break;
-						case 3:
-							color=1;
-							break;
-						case 4:
-							color=2;
-							break;
-						default:
-							break;
-					}
-					setGLMaterial(gl.at,color);
-					setGLMaterial(gl.at,gl[gl.at].materials?color:999);
-					//AL(sprintf("gl[%d]=materialAmbientRGB=%s",gl.at,vec3.printS3(gl[gl.at].materialAmbientRGB)));
-					gl[gl.at].uniform3fv(gl[gl.at].puMaterialAmbientRGB ,gl[gl.at].materialAmbientRGB );
-					gl[gl.at].uniform3fv(gl[gl.at].puMaterialDiffuseRGB ,gl[gl.at].materialDiffuseRGB );
-					gl[gl.at].uniform3fv(gl[gl.at].puMaterialSpecularRGB,gl[gl.at].materialSpecularRGB);
-					gl[gl.at].uniform1f (gl[gl.at].puMaterialShininess  ,gl[gl.at].materials?gl[gl.at].materialShininess:gl.shininess08);
-					//AL("gl.at="+gl.at+" ");
-					glPushMatrix();
-						mat4.translate(gl[gl.at].mvm, [2*ii,2*jj, 0]);
-						//AL(sprintf("gl.rotationDegrees08=%8.3f",gl.rotationDegrees08));
-						mat4.rotate(gl[gl.at].mvm, deg2Rad*gl.rotationDegrees08, [0, 1, 0]); /* if this function gets NaN, nothing draws */
-						setMatrixUniforms08();
-//						gl[gl.at].drawElements(gl.TRIANGLES     ,gl[gl.at].sphereTrianglesFaceIndices.numItems, gl.UNSIGNED_SHORT, 0);
-//				gl[gl.at].drawElements(gl.TRIANGLE_STRIP,gl[gl.at].sphereStripFaceIndices.numItems, gl.UNSIGNED_SHORT, 0);
-						gl[gl.at].drawElements(gl.TRIANGLE_STRIP,gl.constructAt08, gl.UNSIGNED_SHORT, 0);
-//						gl[gl.at].drawElements(gl.TRIANGLE_STRIP,12, gl.UNSIGNED_SHORT, 0);
-					glPopMatrix();
-				}
-				counter++;
-			}
-		}
-	glPopMatrix();
-	
-	/* this section works, just did not need it after getting the stripe to work */
-//	gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereTrianglesFaceXYZs);
-//	gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ, gl[gl.at].sphereTrianglesFaceXYZs.itemSize, gl.FLOAT, false, 0, 0);
-//	gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereTrianglesFaceNormals);
-//	gl[gl.at].vertexAttribPointer(gl[gl.at].paNormal, gl[gl.at].sphereTrianglesFaceNormals.itemSize, gl.FLOAT, false, 0, 0);
-//	gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].sphereTrianglesFaceIndices);
-//	if((0==gl.at)&&20==gl.animationCount08){
-//		AL(sprintf("@450 %5d %5d %5d"
-//			,gl[gl.at].sphereTrianglesFaceXYZs   .numItems
-//			,gl[gl.at].sphereTrianglesFaceNormals.numItems
-//			,gl[gl.at].sphereTrianglesFaceIndices.numItems
-//			)
-//		);
-//		AL(sprintf("@456 %5d %5d %5d"
-//			,gl[gl.at].sphereTrianglesFaceXYZs   .itemSize
-//			,gl[gl.at].sphereTrianglesFaceNormals.itemSize
-//			,gl[gl.at].sphereTrianglesFaceIndices.itemSize
-//			)
-//		);
-//	}		
-//	glPushMatrix();
-//		mat4.translate(gl[gl.at].mvm, [-6, 0, 0]);
-//		var counter=0;
-//		for(var jj=0;jj<7;jj++){
-//			for(var ii=0;ii<7;ii++){
-//				if(  (0==gl.lower08At)	
-//				   ||(  (0!=gl.lower08At)         /* show only the brass on left window on WegGLTutorials */
-//				      &&(gl.at == gl.lower08At)
-//				      &&(3==ii)
-//				      &&(1==jj)
-//				     )
-//				   ||(  (0!=gl.lower08At)      /* show only the emerald on right small window on WegGLTutorials */
-//				      &&(gl.at == gl.upper08At)
-//				      &&(1==ii)
-//				      &&(0==jj)
-//				     )
-//				  ){
-//					setGLMaterial(gl.at,999);
-//					//AL(sprintf("gl[%d]=materialAmbientRGB=%s",gl.at,vec3.printS3(gl[gl.at].materialAmbientRGB)));
-//					gl[gl.at].uniform3fv(gl[gl.at].puMaterialAmbientRGB ,gl[gl.at].materialAmbientRGB );
-//					gl[gl.at].uniform3fv(gl[gl.at].puMaterialDiffuseRGB ,gl[gl.at].materialDiffuseRGB );
-//					gl[gl.at].uniform3fv(gl[gl.at].puMaterialSpecularRGB,gl[gl.at].materialSpecularRGB);
-//					gl[gl.at].uniform1f (gl[gl.at].puMaterialShininess  ,gl[gl.at].materials?gl[gl.at].materialShininess:gl.shininess08);
-//					//AL("gl.at="+gl.at+" ");
-//					glPushMatrix();
-//						mat4.translate(gl[gl.at].mvm, [2*ii,2*jj, 0]);
-//						//AL(sprintf("gl.rotationDegrees08=%8.3f",gl.rotationDegrees08));
-//						mat4.rotate(gl[gl.at].mvm, deg2Rad*gl.rotationDegrees08, [0, 1, 0]); /* if this function gets NaN, nothing draws */
-//						setMatrixUniforms08();
-////						gl[gl.at].drawElements(gl.TRIANGLES     ,gl[gl.at].sphereTrianglesFaceIndices.numItems, gl.UNSIGNED_SHORT, 0);
-//				gl[gl.at].drawElements(gl.TRIANGLES     ,gl.constructAt082, gl.UNSIGNED_SHORT, 0);
-//					glPopMatrix();
-//				}
-//				counter++;
-//			}
-//		}
-//	glPopMatrix();
-	
-	var elem = document.getElementById(sprintf("xyzpry%d",gl.at));
-	//AL("elem="+elem+" "+sprintf("xyzpry%d",gl.at));
-	if(null!=elem)elem.innerHTML=xyzpryPrint();
-	elem = document.getElementById(sprintf("stepTurn%d",gl.at));
-	if(null!=elem)elem.innerHTML=sprintf(" step=%8.3f &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; turn=pi/%d",gl[gl.at].deltaMove,gl[gl.at].deltaTurnPiOver);
-
-	elem = document.getElementById("construct08");
-	if(null!=elem)elem.innerHTML=sprintf("Construt   At %4d",gl.constructAt08);
-	elem = document.getElementById("construct082");
-	if(null!=elem)elem.innerHTML=sprintf("Construt2 At %4d from %4d",Math.floor((gl.constructAt082-1)/3),gl.constructAt082);
-
-	
-	if(20==gl.animationCount08){
-		//AL("at end of drawScene08");
-		gl.talkon08=false;
-	}
+	gl[at].teapotIndices = gl[at].createBuffer();
+	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].teapotIndices);
+	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(teapotData.trianglesIndices), gl.STATIC_DRAW);
+	gl[at].teapotIndices.itemSize = 1;
+	gl[at].teapotIndices.numItems = teapotData.trianglesIndices.length / gl[at].teapotIndices.itemSize;
 }
-function setMatrixUniforms08() {
+function setMatrixUniforms() {
 	gl[gl.at].uniformMatrix4fv(gl[gl.at].puPerspectiveMatrix, false, gl[gl.at].perspectiveMatrix);
 	gl[gl.at].uniformMatrix4fv(gl[gl.at].puMvm, false, gl[gl.at].mvm);
-	
+
 	var normalViewMatrix = mat3.create();
 	mat4.toInverseMat3(gl[gl.at].mvm, normalViewMatrix);
 	mat3.transpose(normalViewMatrix);
@@ -560,42 +538,165 @@ function setMatrixUniforms08() {
 	gl[gl.at].uniformMatrix3fv(gl[gl.at].puNormal, false, normalViewMatrix);
 }
 
-function animate08() {
+function drawScene08() {
+	//AL(sprintf("drawScene08 with gl.at=%2d gl.animationCount08=%3d",gl.at,gl.animationCount08));
+	gl[gl.at].viewport(0, 0, gl[gl.at].viewportWidth, gl[gl.at].viewportHeight);
+	gl[gl.at].clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+	if (  (gl[gl.at].numCriticalJsons2BDone    > gl[gl.at].numCriticalJsonsDone)
+	    ||(gl[gl.at].numCriticalTextures2BDone > gl[gl.at].numCriticalTexturesDone)
+	   ) {
+		if((gl.at==gl.lower08At)&&(20==gl.animationCount08))AL("even at 20=gl.animationCount08 we are at early return.  gl["+gl.at+"].tractionIteration="+gl[gl.at].tractionIteration);
+		return;
+	} else {
+		//if((gl.at==gl.lower08At)&&(20==gl.animationCount08))AL(sprintf("drawScene08 past the nulls with gl.at=%2d gl.animationCount08=%3d",gl.at,gl.animationCount08));
+		if(gl[gl.at].tractionIteration===-1){ /* this will execute only once */
+			elem=document.getElementById("loadingtext");
+			if(null!=elem)elem.textContent = "";
+			gl[gl.at].tractionIteration=gl.animationCount08;
+			initTextures(false);
+		}
+	}
+	
+	
+	mat4.perspective(45, gl[gl.at].viewportWidth / gl[gl.at].viewportHeight, 0.1, 100.0, gl[gl.at].perspectiveMatrix);
+	setMatrixUniforms();
+	
+	var lightXYZ=vec3.create();
+	if(gl[gl.at].directionalLight){
+		vec3.set(gl[gl.at].directionalLightXYZ,lightXYZ);
+		vec3.scale(lightXYZ,1000000000.);
+		mat4.multiplyVec3(gl[gl.at].mvm,lightXYZ);
+		vec3.normalize(lightXYZ);
+		//if((20==gl.animationCount08)&&(0==gl.at))AL(sprintf("gl[%d] gl[gl.at].directionalLightXYZ norm =%s",gl.at,vec3.printS3(lightXYZ)));
+		gl[gl.at].uniform3fv(gl[gl.at].puDirectionalLightXYZ,lightXYZ);
+	} else {
+		/**/if((20==gl.animationCount08)&&(0==gl.at))AL("false == directionalLight08");
+	}
+	if(  gl[gl.at].pointLight
+	   &&(0==gl.lower08At)
+	  ){
+		//if((20==gl.animationCount08)&&(0==gl.at))AL("we have pointlight");
+		lightXYZ = vec3.createFrom(
+			     13*Math.cos(deg2Rad*gl.rotationDegrees08*.12)
+			,0+ (13*Math.sin(deg2Rad*gl.rotationDegrees08*.12))
+			,0+ ( 1*Math.sin(deg2Rad*gl.rotationDegrees08*3.))
+		);
+		gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].pointLightSpriteXYZ);
+		gl[gl.at].bufferData(gl.ARRAY_BUFFER, new Float32Array(lightXYZ), gl.STATIC_DRAW);
+		gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ , 3, gl.FLOAT, false, 0,  0);
+		
+		gl[gl.at].uniform1i(gl[gl.at].puUseFullEmissivity,1);
+		gl[gl.at].drawArrays(gl.POINTS, 0, 1);
+		gl[gl.at].uniform1i(gl[gl.at].puUseFullEmissivity,0);
+		
+		mat4.multiplyVec3(gl[gl.at].mvm,lightXYZ);
+		//if(20==gl.animationCount08)AL(sprintf("gl[%d] gl[gl.lower08At].pointLightXYZ norm =%s",gl.at,vec3.printS3(lightXYZ)));
+		gl[gl.at].uniform3fv(gl[gl.at].puPointLightXYZ,lightXYZ);
+	}
+	
+
+	
+	gl[gl.at].uniform1i(gl[gl.at].puUseTextures, gl[gl.at].texture != "none");
+	gl[gl.at].activeTexture(gl.TEXTURE0);
+	if (gl[gl.at].texture == "earth") {
+		gl[gl.at].bindTexture(gl.TEXTURE_2D, gl[gl.at].earthTexture);
+	} else if (gl[gl.at].texture == "galvanized") {
+		gl[gl.at].bindTexture(gl.TEXTURE_2D, gl[gl.at].galvanizedTexture);
+	} else if (gl[gl.at].texture == "nehe") {
+		gl[gl.at].bindTexture(gl.TEXTURE_2D, gl[gl.at].neheTexture);
+	} else if (gl[gl.at].texture == "glass") {
+		gl[gl.at].bindTexture(gl.TEXTURE_2D, gl[gl.at].glassTexture);
+	} else if (gl[gl.at].texture == "tahoma") {
+		//if(true==gl.textureSay)AL("in tahomaTexture");
+		gl[gl.at].bindTexture(gl.TEXTURE_2D, gl[gl.at].tahomaTexture);
+	}
+	//if((20==gl.animationCount08)&&(0==gl.at))AL("texture="+texture);
+	gl.textureSay=false;
+	
+	glPushMatrix();
+		gl[gl.at].uniform1i(gl[gl.at].puSampler, 0);
+		gl[gl.at].uniform1f (gl[gl.at].puMaterialShininess  ,gl[gl.at].materials?gl[gl.at].materialShininess:gl.shininess08);
+		if(gl[gl.at].shape == "teapot"){
+			mat4.rotate(gl[gl.at].mvm, deg2Rad*90., [1, 0, 0]);	
+			mat4.rotate(gl[gl.at].mvm, deg2Rad*23.4, [1, 0, -1]);
+			mat4.rotate(gl[gl.at].mvm, deg2Rad*gl.rotationDegrees08, [0, 1, 0]);
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].teapotXYZs);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ, gl[gl.at].teapotXYZs.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].teapotTextureCoords);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paTextureCoord, gl[gl.at].teapotTextureCoords.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].teapotNormals);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paNormal, gl[gl.at].teapotNormals.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].teapotIndices);
+			setMatrixUniforms();
+			gl[gl.at].drawElements(gl.TRIANGLES, gl[gl.at].teapotIndices.numItems, gl.UNSIGNED_SHORT, 0);
+		} else
+		if(gl[gl.at].shape == "sphere"){
+			//mat4.rotate(gl[gl.at].mvm, deg2Rad*23.4, [1, 0, -1]);
+			mat4.rotate(gl[gl.at].mvm, deg2Rad*gl.rotationDegrees08, [0, 0, 1]);
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereXYZs);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ, gl[gl.at].sphereXYZs.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereTextureCoords);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paTextureCoord, gl[gl.at].sphereTextureCoords.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereNormals);
+			gl[gl.at].vertexAttribPointer(gl[gl.at].paNormal, gl[gl.at].sphereNormals.itemSize, gl.FLOAT, false, 0, 0);
+			
+			gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].sphereIndices);
+			setMatrixUniforms();
+			gl[gl.at].drawElements(gl.TRIANGLES, gl[gl.at].sphereIndices.numItems, gl.UNSIGNED_SHORT, 0);
+			
+//			if(true==gl[gl.at].showLines){
+//				gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].sphereLineIndices);
+//				setMatrixUniforms();
+//				gl[gl.at].drawElements(gl.LINES, gl[gl.at].sphereLineIndices.numItems, gl.UNSIGNED_SHORT, 0);
+//			}
+			if(true==gl[gl.at].showLines){
+				gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].sphereXYZs);
+				gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ, gl[gl.at].sphereXYZs.itemSize, gl.FLOAT, false, 0, 0);
+				
+				
+				gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].sphereLineIndices);
+				setMatrixUniforms();
+				gl[gl.at].uniform1i(gl[gl.at].puUseFullEmissivity,1);	
+				gl[gl.at].drawElements(gl.LINES, gl[gl.at].sphereLineIndices.numItems, gl.UNSIGNED_SHORT, 0);
+				gl[gl.at].uniform1i(gl[gl.at].puUseFullEmissivity,0);
+			}
+		}
+	glPopMatrix();
+	
+//	var elem = document.getElementById(sprintf("xyzpry%d",gl.at));
+//	//AL("elem="+elem+" "+sprintf("xyzpry%d",gl.at));
+//	if(null!=elem)elem.innerHTML=xyzpryPrint();
+	
+	var elem = document.getElementById(sprintf("xyzpry%d",gl.at));
+	//AL("elem="+elem+" "+sprintf("xyzpry%d",gl.at));
+	if(null!=elem)elem.innerHTML=xyzpryPrint();
+	elem = document.getElementById(sprintf("stepTurn%d",gl.at));
+	if(null!=elem)elem.innerHTML=sprintf(" step=%8.3f &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; turn=pi/%d",gl[gl.at].deltaMove,gl[gl.at].deltaTurnPiOver);
+
+}
+
+function animate() {
 	var timeNow = new Date().getTime();
-	/**/if(-1!=gl.animationHaltAt08)AL("animateCount="+gl.animationCount08+" vs gl.animationHaltAt08="+gl.animationHaltAt08);
 	if (gl.lastTime08 != 0) {
 		var elapsed = timeNow - gl.lastTime08;
+		gl.rotationDegrees08 += 0.05 * elapsed*gl.rotationSpeedFactor;
+		/* this was used to see which angles were the crossover points for the seems-to-be-a cube */
 		if(gl.animationHaltAt08==gl.animationCount08){
 			gl.animationHalt08=true;
 		}	
-		if(false==gl.animationHalt08){
-			gl.rotationDegrees08 +=  gl.RPM * elapsed *.006;
-			if(360.<gl.rotationDegrees08)gl.rotationDegrees08-=360.;
-			if(  0.>gl.rotationDegrees08)gl.rotationDegrees08+=360.;
-			gl.animationCount08++;
-		}
-		if(gl.constructHaltAt08==gl.constructCount08){
-			gl.constructHalt08=true;
-		}	
-		if(false==gl.constructHalt08){
-			gl.constructAt08++;
-			if(gl[gl.at].sphereStripFaceIndices.numItems<gl.constructAt08)gl.constructAt08=3;
-		}
-		if(gl.constructHaltAt082==gl.constructCount082){
-			gl.constructHalt082=true;
-		}	
-		if(false==gl.constructHalt082){
-			gl.constructAt082+=3;
-			if(gl[gl.at].sphereTrianglesFaceIndices.numItems<gl.constructAt082)gl.constructAt082=3;
-		}
+		gl.animationCount08++;
 	}
 	gl.lastTime08 = timeNow;
 }
+
 function tick08() {
-	if(  (false==gl.animationHalt08)
-	   ||(false==gl.constructHalt08)
-	   ||(false==gl.constructHalt082)
-	){
+	if(false==gl.animationHalt08){
 		requestAnimFrame(tick08);
 	}
 	gl.at=gl.lower08At;
@@ -603,7 +704,7 @@ function tick08() {
 	gl.at=gl.upper08At;
 	drawScene08();
 	
-	animate08();
+	animate();
 }
 function reDraw(){
 	/* general utility, needed when animation is turned off, or else your will not see any changes */
@@ -612,77 +713,9 @@ function reDraw(){
 	gl.at=gl.upper08At;
 	drawScene08();
 }
-/****************  the teapot deprecated in favor of the spheres ************************/ 
-function loadTeapot(isLastJson) {
-	//AL("cme@ loadTeapot gl.animationCount08="+gl.animationCount08);
-	var request = new XMLHttpRequest();
-	request.open("GET", "json/Teapot/Teapot.json");
-	request.onreadystatechange = function () {
-		if (request.readyState == 4) {
-			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount08));
-			var sayVarList = false;
-			//sayVarList=true;
-			var parsedJson=JSON.parse(request.responseText,(sayVarList?jsonReviverVarList:null));
-			handleLoadedTeapot(parsedJson,gl.lower08At);
-			handleLoadedTeapot(parsedJson,gl.upper08At);
-			if(isLastJson){
-				gl[gl.lower08At].jsonsDone=true;
-				gl[gl.upper08At].jsonsDone=true;
-				//AL("gl["+gl.at+"].jsonsDone="+(gl[gl.at].jsonsDone?"true":"false"));
-			}
-		}
-	};
-	//AL(sprintf("%3d loadTeapot() pre  requedt.send()",gl.animationCount08));
-	request.send();
-	//AL(sprintf("%3d loadTeapot() post requedt.send()",gl.animationCount08));
+function AL(message){
+	$.ajax({type:"POST",url:"WebGLTutorials",data:"2log="+message});
 }
-function handleLoadedTeapot(parsedJson,at) {
-	//AL(sprintf("handelLoadedTeapot(at=%d) parsedJson.vertexXYZs.length=%d",at,parsedJson.vertexXYZs.length));
-	
-	gl[at].teapotXYZs = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotXYZs);
-	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(parsedJson.vertexXYZs), gl.STATIC_DRAW);
-	gl[at].teapotXYZs.itemSize = 3;
-	gl[at].teapotXYZs.numItems = parsedJson.vertexXYZs.length / gl[at].teapotXYZs.itemSize;
-	//if(at==gl.lower08At)AL(sprintf("teapotXYZs   .numItems=%5d",gl[at].teapotXYZs.numItems));
-	
-	gl[at].teapotNormals = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].teapotNormals);
-	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(parsedJson.vertexNormals), gl.STATIC_DRAW);
-	gl[at].teapotNormals.itemSize = 3;
-	gl[at].teapotNormals.numItems = parsedJson.vertexNormals.length / gl[at].teapotNormals.itemSize;
-	//if(at==gl.lower08At)AL(sprintf("teapotNormals.numItems=%5d",gl[at].teapotNormals.numItems));
-	
-	gl[at].teapotIndices = gl[at].createBuffer();
-	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].teapotIndices);
-	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(parsedJson.trianglesIndices), gl.STATIC_DRAW);
-	gl[at].teapotIndices.itemSize = 1;
-	gl[at].teapotIndices.numItems = parsedJson.trianglesIndices.length / gl[at].teapotIndices.itemSize;
-	//if(at==gl.lower08At)AL(sprintf("teapotIndices.numItems=%5d  devidedby3=%d",gl[at].teapotIndices.numItems,gl[at].teapotIndices.numItems/3));
-	
-	document.getElementById("loadingtext").textContent = "";
-}
-function drawTeapot() {
-	glPushMatrix();
-		//xyzpryLogView();
-		//mat4.rotate(gl[gl.at].mvm, deg2Rad*23.4, [1, 0, -1]);
-		
-		//AL(sprintf("gl.rotationDegrees08=%8.3f",gl.rotationDegrees08));
-		mat4.rotate(gl[gl.at].mvm, deg2Rad*gl.rotationDegrees08, [0, 1, 0]); /* if this function gets NaN, nothing draws */
-		
-		gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].teapotXYZs);
-		gl[gl.at].vertexAttribPointer(gl[gl.at].paXYZ, gl[gl.at].teapotXYZs.itemSize, gl.FLOAT, false, 0, 0);
-		
-		gl[gl.at].bindBuffer(gl.ARRAY_BUFFER, gl[gl.at].teapotNormals);
-		gl[gl.at].vertexAttribPointer(gl[gl.at].paNormal, gl[gl.at].teapotNormals.itemSize, gl.FLOAT, false, 0, 0);
-		
-		gl[gl.at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[gl.at].teapotIndices);
-		setMatrixUniforms08();
-	//	gl[gl.at].drawElements(gl.TRIANGLES, gl[gl.at].teapotIndices.numItems, gl.UNSIGNED_SHORT, 0);
-	glPopMatrix();	
-}
-/***************************************   end of teapot ******************************/
-
 /********  stuff below is GUI related *************************************************/
 function setCheckMarks() {
 	/* in this app both the canvases will always have the same lighting, so all the checkboxes apply to both */
@@ -725,7 +758,8 @@ function handleAmbientChange(cp) {
 /**************************************  Directional Light ***************************************/
 function handleDXYZSliderSlide(e, ui){
 	var angle = Math.PI*(100-ui.value)/100.;
-	gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-0.3,Math.sin(angle));
+	//gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-0.3,Math.sin(angle));
+	gl[gl.lower08At].directionalLightXYZ = vec3.createFrom(Math.cos(angle),-Math.sin(angle),0.);
 	gl[gl.upper08At].directionalLightXYZ = gl[gl.lower08At].directionalLightXYZ; 
 	//AL(sprintf("(%s) DLightSlider %3d angle=%8.3f ",vec3.printS3(gl[gl.at].directionalLightXYZ),ui.value,angle*rad2Deg));
 	setDirectionalLight(gl.lower08At);
@@ -768,8 +802,18 @@ function handlePointDiffuseChange(cp) {
 
 /**************************************   shininess  ***************************************/
 function handleShininessSliderSlide(e, ui){
-	gl.shininess08=ui.value/10;
+	gl.shininess08=ui.value/10; /* this gets used/set in the onDraw function */
 	//AL("ShininessSliderSlide on the move "+ui.value +" becomming "+gl.shininess08);
+	reDraw();
+}
+/**************************************  Rotation Speed ***************************************/
+function handleRotationSpeedSliderSlide(e, ui){
+	if(ui.value < 5){ gl.rotationSpeedFactor=0.;
+	}
+	else{
+		gl.rotationSpeedFactor=1+(2.*((ui.value-5.)/47.5)-1.);
+	}
+	//AL(sprintf("slider at %6.3ff  %6.3f %6.3f",ui.value,gl.rotationSpeedFactor,((ui.value-5.)/47.5) ));
 	reDraw();
 }
 /************************************** the onReady functions ************************************/
@@ -778,9 +822,104 @@ $(document).ready(function(){
 	if(-1<document.getElementById("title").innerHTML.indexOf("tutorial08")){
 		//AL("inside ready for tutorial08");
 		$('#tutorial08Tabs').tabs({
-			active: 3,
+			active: 0,
 			collapsible: false
 		});
+		$("input[id^=lighting]").click(function (event) {
+			gl[gl.lower08At].lighting  = document.getElementById(this.id).checked;
+			gl[gl.upper08At].lighting = gl[gl.lower08At].lighting;
+			//AL("checkBox "+this.id+" incomming is "+gl[gl.lower08At].lighting);
+			gl[gl.lower08At].uniform1i(gl[gl.lower08At].puUseLighting,gl[gl.lower08At].lighting);
+			gl[gl.upper08At].uniform1i(gl[gl.upper08At].puUseLighting,gl[gl.upper08At].lighting);
+			//setCheckMarks();
+			reDraw();
+		});
+//		$("input[id^=textures]").click(function (event) {
+//			gl[gl.lower08At].useTextures  = document.getElementById(this.id).checked;
+//			gl[gl.upper08At].useTextures = gl[gl.lower08At].useTextures;
+//			//AL("checkBox "+this.id+" incomming is "+gl[gl.lower08At].useTextures);
+//			gl[gl.lower08At].uniform1i(gl[gl.lower08At].puUseTextures,gl[gl.lower08At].useTextures);
+//			gl[gl.upper08At].uniform1i(gl[gl.upper08At].puUseTextures,gl[gl.upper08At].useTextures);
+//			//setCheckMarks();
+//			reDraw();
+//		});
+		$("input[id^=tex]").click(function (event) {
+			var switchVar=parseFloat(this.id.substring(this.id.length-2,this.id.length));
+			//AL("inside tex (texture) radio button[id="+this.id+"] num="+switchVar+" from "+(this.id.length-2)+" "+this.id.length);
+			switch(switchVar){
+				case 0://texture="none";
+					gl[gl.lower08At].texture="none";
+					gl[gl.upper08At].texture="none";
+					break;
+				case 1://texture="Galvanized";
+					gl[gl.lower08At].texture="galvanized";
+					gl[gl.upper08At].texture="galvanized";
+					break;
+				case 2://texture="Earth";
+					gl[gl.lower08At].texture="earth";
+					gl[gl.upper08At].texture="earth";
+					break;
+				case 3://texture="NeHe";
+					gl[gl.lower08At].texture="nehe";
+					gl[gl.upper08At].texture="nehe";
+					break;
+				case 4://texture="StainedGlass";
+					gl[gl.lower08At].texture="glass";
+					gl[gl.upper08At].texture="glass";
+					break;
+				case 5:
+					gl[gl.lower08At].texture="tahoma";
+					gl[gl.upper08At].texture="tahoma";
+					break;
+				default://texture="Galvanized";
+					gl[gl.lower08At].texture="galvanized";
+					gl[gl.upper08At].texture="galvanized";
+			}
+			gl.textureSay=true;
+			reDraw();
+		});	
+		$("input[id^=shape]").click(function (event) {
+			var switchVar=parseFloat(this.id.substring(this.id.length-2,this.id.length));
+			//AL("inside shape radio button[id="+this.id+"] num="+switchVar);
+			switch(switchVar){
+				case 0://shape="none";
+					gl[gl.lower08At].shape="teapot";
+					gl[gl.upper08At].shape="teapot";
+					break;
+				case 1://shape="Galvanized";
+					gl[gl.lower08At].shape="sphere";
+					gl[gl.upper08At].shape="sphere";
+					gl.at=gl.lower08At;
+					xyzprySetInDegrees(   0,-40,  0,  0,  0, 90);
+					gl.at=gl.upper08At;
+					xyzprySetInDegrees(   0, 40,  0,  0,  0,270);
+					break;
+				case 2://shape="Earth";
+					gl[gl.lower08At].shape="cube";
+					gl[gl.upper08At].shape="cube";
+					break;
+				case 3://shape="NeHe";
+					gl[gl.lower08At].shape="icosahedron";
+					gl[gl.upper08At].shape="icosahedron";
+					break;
+				default://shape="Galvanized";
+					gl[gl.lower08At].shape="teapot";
+					gl[gl.upper08At].shape="teapot";
+			}
+			reDraw();
+		});	
+		$("input[id=sphereLines]").click(function (event) {
+			var checked=this.checked;
+			//AL("inside sphereLines button checked="+checked);
+			gl[gl.lower08At].showLines=checked;
+			gl[gl.upper08At].showLines=checked;
+			if(checked){
+				gl.rotationSpeedFactor*=.1;
+			} else {
+				gl.rotationSpeedFactor*=10.;
+			}
+			reDraw();
+		});	
 		$("input[id^=step08]").click(function (event) {
 			//AL("inside08 button[id="+this.id+"]");
 			//AL("looking at this.id="+this.id);
@@ -788,7 +927,7 @@ $(document).ready(function(){
 			//AL("whichCanvas="+gl.at);
 			//AL("step this.id="+this.id+" this.id.substring(7,9)="+this.id.substring(7,9));
 			if(   (this.id.substring(7,9) == "dn")
-			   &&(.0008<gl[gl.at].deltaMove)		
+			   &&(.0005<gl[gl.at].deltaMove)		
 			  ){
 				gl[gl.at].deltaMove/=2;
 				//AL("setting gl["+gl.at+"].deltaMove="+gl[gl.at].deltaMove);
@@ -836,30 +975,26 @@ $(document).ready(function(){
 			document.getElementById(0==gl.at?"tutorial08-canvas0":"tutorial08-canvas1").focus();
 			drawScene08();
 		});
-		 $("#directionalLightXYZSlider").slider({
+		$("#directionalLightXYZSlider").slider({
 			animate: true,
 			value: 50,
 			slide: handleDXYZSliderSlide
 		});
-		 $("#shininessSlider1").slider({
+		$("#shininessSlider1").slider({
 			animate: true,
 			value:50,
 			slide: handleShininessSliderSlide
 		});
-		 $("#shininessSlider2").slider({
+		$("#shininessSlider2").slider({
 			animate: true,
 			value:50,
 			slide: handleShininessSliderSlide
-		}); 
-		$("input[id^=lighting]").click(function (event) {
-			gl[gl.lower08At].lighting  = document.getElementById(this.id).checked;
-			gl[gl.upper08At].lighting = gl[gl.lower08At].lighting;
-			//AL("checkBox "+this.id+" incomming is "+gl[gl.lower08At].lighting);
-			gl[gl.lower08At].uniform1i(gl[gl.lower08At].puUseLighting,gl[gl.lower08At].lighting);
-			gl[gl.upper08At].uniform1i(gl[gl.upper08At].puUseLighting,gl[gl.upper08At].lighting);
-			setCheckMarks();
-			reDraw();
 		});
+		$("#rotationSpeedSlider").slider({
+			animate: true,
+			value: 50,
+			slide: handleRotationSpeedSliderSlide
+		});		
 		$("input[id^=directionalLight]").click(function (event) {
 			gl[gl.lower08At].directionalLight  = document.getElementById(this.id).checked;
 			gl[gl.upper08At].directionalLight = gl[gl.lower08At].directionalLight;
@@ -873,10 +1008,12 @@ $(document).ready(function(){
 			gl[gl.lower08At].pointLight  = document.getElementById(this.id).checked;
 			gl[gl.upper08At].pointLight = gl[gl.lower08At].pointLight;
 			//AL("checkBox "+this.id+" incomming is "+gl[gl.lower08At].pointLight);
-			if(true==gl[gl.upper08At].pointLight){
-				gl.at=gl.upper08At;
-				xyzprySetInDegrees(   0,  -13.125, 2.75, 0,  0, 90);
-			}
+//			if(true==gl[gl.upper08At].pointLight){
+//				gl.at=gl.lower08At;
+//				xyzprySetInDegrees(   0,  6 ,  18.5,-90,  0, 90);
+//				gl.at=gl.upper08At;
+//				xyzprySetInDegrees(   0,  -13.125, 2.75, 0,  0, 90);
+//			}
 			setCheckMarks();
 			setPointLight(gl.lower08At);
 			setPointLight(gl.upper08At);
@@ -889,17 +1026,6 @@ $(document).ready(function(){
 			if(true==gl[gl.lower08At].materials){
 				document.getElementById("shiner1").style.display = 'none';
 				document.getElementById("shiner2").style.display = 'none';
-				
-				gl[gl.lower08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
-				gl[gl.lower08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
-				gl[gl.lower08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
-				gl[gl.lower08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
-				
-				gl[gl.upper08At].directionalLightSpecularRGB = vec3.createFrom(1.0,1.0,1.0);
-				gl[gl.upper08At].directionalLightDiffuseRGB  = vec3.createFrom(1.0,1.0,1.0);
-				gl[gl.upper08At].pointLightSpecularRGB       = vec3.createFrom(0.8,0.8,0.8);
-				gl[gl.upper08At].pointLightDiffuseRGB        = vec3.createFrom(0.8,0.8,0.8);
-				
 				//AL("into true0");
 				$("#directionalSpecular").spectrum("set", "#FFFFFF");		
 				$("#directionalDiffuse" ).spectrum("set", "#FFFFFF");
@@ -910,17 +1036,8 @@ $(document).ready(function(){
 			} else {
 				document.getElementById("shiner1").style.display = 'block';
 				document.getElementById("shiner2").style.display = 'block';
-				
-				gl[gl.lower08At].directionalLightSpecularRGB = vec3.createFrom(0.0,1.0,0.0);
-				gl[gl.lower08At].directionalLightDiffuseRGB  = vec3.createFrom(0.5,0.5,0.5);
-				gl[gl.lower08At].pointLightSpecularRGB       = vec3.createFrom(0.0,0.0,1.0);
-				gl[gl.lower08At].pointLightDiffuseRGB        = vec3.createFrom(0.5,0.5,0.5);
-				
-				gl[gl.upper08At].directionalLightSpecularRGB = vec3.createFrom(0.0,1.0,0.0);
-				gl[gl.upper08At].directionalLightDiffuseRGB  = vec3.createFrom(0.5,0.5,0.5);
-				gl[gl.upper08At].pointLightSpecularRGB       = vec3.createFrom(0.0,0.0,1.0);
-				gl[gl.upper08At].pointLightDiffuseRGB        = vec3.createFrom(0.5,0.5,0.5);
-				
+
+				AL("launching from spectrum set");
 				$("#directionalSpecular").spectrum("set", "#00FF00");
 				$("#directionalDiffuse" ).spectrum("set", "#808080");
 				$("#pointSpecular").spectrum("set", "#0000FF");
@@ -929,12 +1046,6 @@ $(document).ready(function(){
 				$("#ambient2").spectrum("set", "#333333");
 			} 
 			setCheckMarks();
-			setDirectionalLight(gl.lower08At);
-			setDirectionalLight(gl.upper08At);
-			setPointLight(gl.lower08At);
-			setPointLight(gl.upper08At);
-			setAmbientUniforms(gl.lower08At);
-			setAmbientUniforms(gl.upper08At);
 			reDraw();
 		});
 		$("input[id^=specularHighlights]").click(function (event) {
@@ -985,28 +1096,6 @@ $(document).ready(function(){
 			showInput: true,
 			clickoutFiresChange: true
 		});
-		$("input[id=rotating]").click(function (event) {
-			//AL("button "+this.id);
-			var elem = document.getElementById(this.id);
-			//AL("looking at elem.value="+elem.value);
-			if(-1<elem.value.indexOf("Halt")){
-				elem.value="ReStart";
-				gl.animationHalt08=true;
-				//AL("halting the tweening animation");
-			} else {
-				elem.value="  Halt ";
-				gl.lastTime08=new Date().getTime();
-				//AL("restarting the tweening animation");
-				gl.animationHalt08=false;
-				requestAnimFrame(tick08);
-			}
-		});
-
-		$("input[id=rotateZero]").click(function (event) {
-			//AL("button "+this.id);
-			gl.rotationDegrees08=0.;
-			requestAnimFrame(tick08);
-		});
 		$("input[id^=cullFaces]").click(function (event) {
 			//AL("inside08 button[id="+this.id+"]");
 			var elem = document.getElementById(this.id);
@@ -1024,65 +1113,6 @@ $(document).ready(function(){
 			}
 			reDraw();
 		});
-		$("input[id=constructing]").click(function (event) {
-			//AL("button "+this.id);
-			var elem = document.getElementById(this.id);
-			//AL("looking at elem.value="+elem.value);
-			if(-1<elem.value.indexOf("Halt")){
-				elem.value="Construct ReStart";
-				gl.constructHalt08=true;
-				//AL("halting the construction cycling");
-			} else {
-				elem.value="Construct Halt ";
-				//AL("starting the construction cycling");
-				gl.constructHalt08=false;
-				requestAnimFrame(tick08);
-			}
-		});
-		$("input[id=constructIncrement]").click(function (event) {
-			//AL("button "+this.id);
-			gl.constructAt08++;
-			if(gl[gl.at].sphereStripFaceIndices.numItems<gl.constructAt08)gl.constructAt08=3;
-			requestAnimFrame(tick08);
-		});
-		$("input[id=constructDecrement]").click(function (event) {
-			//AL("button "+this.id);
-			gl.constructAt08--;
-			if(2==gl.constructAt08){
-				gl.constructAt08=gl[gl.at].sphereStripFaceIndices.numItems;
-			}
-			requestAnimFrame(tick08);
-		});
-		$("input[id=constructing2]").click(function (event) {
-			//AL("button "+this.id);
-			var elem = document.getElementById(this.id);
-			//AL("looking at elem.value="+elem.value);
-			if(-1<elem.value.indexOf("Halt")){
-				elem.value="Construct2 ReStart";
-				gl.constructHalt082=true;
-				//AL("halting the construction cycling");
-			} else {
-				elem.value="Construct Halt ";
-				//AL("starting the construction cycling");
-				gl.constructHalt082=false;
-				requestAnimFrame(tick08);
-			}
-		});
-		$("input[id=constructIncrement2]").click(function (event) {
-			//AL("button "+this.id);
-			gl.constructAt082+=3;
-			if(gl[gl.at].sphereTrianglesFaceIndices.numItems<gl.constructAt082)gl.constructAt082=3;
-			requestAnimFrame(tick08);
-		});
-		$("input[id=constructDecrement2]").click(function (event) {
-			//AL("button "+this.id);
-			gl.constructAt082-=3;
-			if(3>gl.constructAt082){
-				gl.constructAt082=gl[gl.at].sphereTrianglesFaceIndices.numItems;
-			}
-			requestAnimFrame(tick08);
-		});
-
 	}
 	$('canvas[id^="tutorial08-canvas"]')
 	/*Mouse down override to prevent default browser controls from appearing */
@@ -1108,7 +1138,6 @@ $(document).ready(function(){
 				gl.at=gl.upper08At;	
 			}
 			//AL("event.keyCode="+event.keyCode+"  gl.at="+gl.at);
-			
 			gl.mvm0.set(gl[gl.at].mvm);
 			gl.mvm1.set(gl[gl.at].mvm);
 			
@@ -1172,7 +1201,7 @@ $(document).ready(function(){
 			  
 			default:
 				/* no need to do anything, unless one is looking to code for a new key...  then uncomment the followint */
-				AL("keycode for the (currently undefined action) key just struck is="+event.keyCode);
+				//AL("keycode for the (currently undefined action) key just struck is="+event.keyCode);
 			}
 			if(true==gl.animationHalt08){
 				var thisId=document.activeElement.id;
@@ -1187,78 +1216,3 @@ $(document).ready(function(){
 		return false; 
 	});
 });
-function checkoutTeapotJsons(isLastJson) {
-	//AL("cme@ loadFacetedSphere gl.animationCount08="+gl.animationCount08);
-	var requestA = new XMLHttpRequest();
-	requestA.open("GET", "json/Teapot/Teapot.json");
-	requestA.onreadystatechange = function () {
-		if (requestA.readyState == 4) {
-			//AL("A inside loadSphere requestgl.animationCount08="+gl.animationCount08+" "+gl.lower08At);
-			//AL("requestA.responseText="+requestA.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(requestA.responseText,(sayVarList?jsonReviverVarList:null));
-//			handleLoadedSphere08(parsedJson,gl[gl.lower08At],gl.lower08At);
-			//AL("B inside loadSphere requestgl.animationCount08="+gl.animationCount08);
-//			handleLoadedSphere08(parsedJson,gl[gl.upper08At],gl.upper08At);
-//			elem=document.getElementById("loadingtext");
-//			if(null!=elem)elem.textContent = "";
-			if(isLastJson){
-				gl[gl.lower08At].jsonsDone=true;
-				gl[gl.upper08At].jsonsDone=true;
-				//AL("gl["+gl.at+"].jsonsDone="+(gl[gl.at].jsonsDone?"true":"false"));
-			}
-		}
-	};
-	//AL("about to request.send()");
-	requestA.send();
-	
-	var requestB = new XMLHttpRequest();
-	requestB.open("GET", "json/Teapot/GitHubTeapot.json");
-	requestB.onreadystatechange = function () {
-		if (requestB.readyState == 4) {
-			//AL("A inside loadSphere requestgl.animationCount08="+gl.animationCount08+" "+gl.lower08At);
-			//AL("requestB.responseText="+requestB.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(requestB.responseText,(sayVarList?jsonReviverVarList:null));
-//			handleLoadedSphere08(parsedJson,gl[gl.lower08At],gl.lower08At);
-			//AL("B inside loadSphere requestgl.animationCount08="+gl.animationCount08);
-//			handleLoadedSphere08(parsedJson,gl[gl.upper08At],gl.upper08At);
-//			elem=document.getElementById("loadingtext");
-//			if(null!=elem)elem.textContent = "";
-			if(isLastJson){
-				gl[gl.lower08At].jsonsDone=true;
-				gl[gl.upper08At].jsonsDone=true;
-				//AL("gl["+gl.at+"].jsonsDone="+(gl[gl.at].jsonsDone?"true":"false"));
-			}
-		}
-	};
-	//AL("about to request.send()");
-	requestB.send();
-
-	var requestC = new XMLHttpRequest();
-	requestC.open("GET", "json/Teapot/WebGLMMOTeapot.json");
-	requestC.onreadystatechange = function () {
-		if (requestC.readyState == 4) {
-			//AL("A inside loadSphere requestgl.animationCount08="+gl.animationCount08+" "+gl.lower08At);
-			//AL("requestC.responseText="+requestC.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0; /* the gl.couner is used internally by the jsoanReviverVarList function */
-			var parsedJson=JSON.parse(requestC.responseText,(sayVarList?jsonReviverVarList:null));
-//			handleLoadedSphere08(parsedJson,gl[gl.lower08At],gl.lower08At);
-			//AL("B inside loadSphere requestgl.animationCount08="+gl.animationCount08);
-//			handleLoadedSphere08(parsedJson,gl[gl.upper08At],gl.upper08At);
-//			elem=document.getElementById("loadingtext");
-//			if(null!=elem)elem.textContent = "";
-			if(isLastJson){
-				gl[gl.lower08At].jsonsDone=true;
-				gl[gl.upper08At].jsonsDone=true;
-				//AL("gl["+gl.at+"].jsonsDone="+(gl[gl.at].jsonsDone?"true":"false"));
-			}
-		}
-	};
-	//AL("about to request.send()");
-	requestC.send();
-	//AL("back from request.send()");
-}

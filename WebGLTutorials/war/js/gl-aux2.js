@@ -597,7 +597,8 @@ function setGLConstants(){
 	//AL("cme@ setGLConstants();");
 	gl.mvm0 = mat4.create(); /* for temporary storage of mvm when doing moves */
 	gl.mvm1 = mat4.create(); /* for temporary storage of mvm when doing moves */	
-	gl.counter =0; /* general purpose utility counter, initially added so jsonReviverVarList would have a counter */ 
+	gl.counter =0; /* general purpose utility counter, initially added so jsonReviverVarList would have a counter */
+	gl.sayVarList=false;
 	
     gl.DEPTH_BUFFER_BIT               =gl[0].DEPTH_BUFFER_BIT              ;
     gl.STENCIL_BUFFER_BIT             =gl[0].STENCIL_BUFFER_BIT            ;
@@ -1178,11 +1179,8 @@ function jsonReviverVarList(key, value) {
 		AL(sprintf("%5d jsonVarList %s",gl.counter,key));
 		gl.counter=-1;
 	}
-	/* if you invoke the more wordy outputs below, you'll need to define a global 
-	    var counter=0;
-	*/
-//	if(8000<gl.counter)	AL("jprlv "+typeof(key)+" "+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
-//	if(typeof(value) === 'object')AL("OBJECT "+key.length+" typeof(key)="+typeof(key)+" typeof(value)="+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
+/**/	if(8000<gl.counter)	AL("jprlv "+typeof(key)+" "+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
+/**/	if(typeof(value) === 'object')AL("OBJECT "+key.length+" typeof(key)="+typeof(key)+" typeof(value)="+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
 	gl.counter++;
 	return value;
 }
@@ -1594,7 +1592,7 @@ function intersectLines1(lpm,basepoint0,V0,basepoint1,V1){
 		return(false);
 	}
 }
-//TODO put a blue mark at the end of this function
+//TODO put a blue mark here
 /*****************************************************************************************/
 /**
  * @class 3 Dimensional Plane

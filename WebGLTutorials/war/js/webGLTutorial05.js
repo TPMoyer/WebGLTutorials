@@ -211,9 +211,8 @@ function loadFacetedSphere05(isLastJson) {
 		if (requestA.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestA.responseText="+requestA.responseText);
-			var sayVarList = false;
-			//sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestA.responseText,(sayVarList?jsonReviverVarList:null));
+			//gl.sayVarList=true; gl.counter=0;/* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(requestA.responseText,(gl.sayVarList?jsonReviverVarList:null));
 			var xyzs    = [];
 			var normals = [];
 			var uvs     = [];
@@ -558,9 +557,8 @@ function loadTeapot(isLastJson) {
 	request.onreadystatechange = function () {
 		if (request.readyState == 4) {
 			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount05));
-			var sayVarList = false;
-			//sayVarList=true;
-			var parsedJson=JSON.parse(request.responseText,(sayVarList?jsonReviverVarList:null));
+			//gl.sayVarList=true;gl.counter=0;/* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(request.responseText,(gl.sayVarList?jsonReviverVarList:null));
 			handleLoadedTeapot(parsedJson,gl.lower05At);
 			handleLoadedTeapot(parsedJson,gl.upper05At);
 			if(isLastJson){
@@ -1055,9 +1053,8 @@ function checkoutTeapotJsons(isLastJson) {
 		if (requestA.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestA.responseText="+requestA.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestA.responseText,(sayVarList?jsonReviverVarList:null));
+			/**/gl.sayVarList=true; gl.counter=0;/* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(requestA.responseText,(gl.sayVarList?jsonReviverVarList:null));
 		}
 	};
 	//AL("about to request.send()");
@@ -1070,9 +1067,8 @@ function checkoutTeapotJsons(isLastJson) {
 		if (requestB.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestB.responseText="+requestB.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestB.responseText,(sayVarList?jsonReviverVarList:null));
+			/**/gl.sayVarList=true; gl.counter=0;/* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(requestB.responseText,(gl.sayVarList?jsonReviverVarList:null));
 		}
 	};
 	//AL("about to request.send()");
@@ -1085,9 +1081,8 @@ function checkoutTeapotJsons(isLastJson) {
 		if (requestC.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestC.responseText="+requestC.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestC.responseText,(sayVarList?jsonReviverVarList:null));
+			/**/gl.sayVarList=true; gl.counter=0;/* the gl.couner is used internally by the jsoanReviverVarList function */
+			var parsedJson=JSON.parse(requestC.responseText,(gl.sayVarList?jsonReviverVarList:null));
 		}
 	};
 	//AL("about to request.send()");
@@ -1101,9 +1096,8 @@ function checkoutTeapotJsons(isLastJson) {
 		if (requestD.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestC.responseText="+requestC.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestC.responseText,(sayVarList?jsonReviverVarList:null));
+			/**/gl.sayVarList=true; gl.counter=0;
+			var parsedJson=JSON.parse(requestC.responseText,(gl.sayVarList?jsonReviverVarList:null));
 		}
 	};
 	//AL("about to request.send()");
@@ -1118,9 +1112,8 @@ function checkoutTeapotJsons(isLastJson) {
 		if (requestE.readyState == 4) {
 			//AL("A inside loadSphere requestgl.animationCount05="+gl.animationCount05+" "+gl.lower05At);
 			//AL("requestC.responseText="+requestC.responseText);
-			var sayVarList = false;
-			/**/sayVarList=true; gl.counter=0;
-			var parsedJson=JSON.parse(requestC.responseText,(sayVarList?jsonReviverVarList:null));
+			/**/gl.sayVarList=true; gl.counter=0;
+			var parsedJson=JSON.parse(requestC.responseText,(gl.sayVarList?jsonReviverVarList:null));
 		}
 	};
 	//AL("about to request.send()");
