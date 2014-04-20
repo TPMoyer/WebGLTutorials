@@ -25,8 +25,7 @@ function webGLStart08() {
 	loadSphere();
 	loadTeapot();
 	loadFont();
-	genCube(gl.lower08At);
-	genCube(gl.upper08At);
+
 	//genSquares();
 	
 	gl.at=gl.lower08At;	initShaders();
@@ -303,7 +302,8 @@ function initTextures(critical) {
 		gl[gl.lower08At].tahomaTexture = gl[gl.lower08At].createTexture();
 		gl[gl.upper08At].tahomaTexture = gl[gl.upper08At].createTexture();
 		var tahomaImage = new Image();
-		tahomaImage.src = "images/textures/Font_Var_Part_1024_TAHOMA_400_121.png";
+		//tahomaImage.src = "images/textures/Font_1024_Var_Part_TAHOMA_400_121.png";
+		tahomaImage.src = "images/textures/Font_1024_Var_Part_TAHOMA_400_121_Construct.png";
 		tahomaImage.onload = function () {
 			handleLoadedTexture(gl[gl.lower08At].tahomaTexture,gl.lower08At,tahomaImage);
 			gl[gl.lower08At].numSecondaryTexturesDone++;
@@ -375,66 +375,95 @@ function loadFont() {
 			//AL(sprintf("%3d loadTeapot() request readyState==4",gl.animationCount08));
 			JSON.parse(request.responseText,jsonTextReviver); /* this is not assigned to any var, because the whole job is done within jsonTextReviver() */
 			//AL("got teapot json "+gl[gl.lower08At].numCriticalJsonsDone+" "+gl[gl.upper08At].numCriticalJsonsDone );
+			genCube(gl.lower08At);
+			genCube(gl.upper08At);
 		}
 	};
 	//AL(sprintf("%3d loadTeapot() pre  requedt.send()",gl.animationCount08));
 	request.send();
 	//AL(sprintf("%3d loadTeapot() post requedt.send()",gl.animationCount08));
 }
+//,{"index": 84,"A": -1,"B": 74,"C": -2,"X": 557,"Y": 464} T
+//,{"index": 98,"A":  8,"B": 56,"C":  3,"X": 565,"Y": 318} b
+//,{"index":106,"A": -5,"B": 31,"C":  8,"X":   0,"Y": 172} j
 function jsonTextReviver(key, value) {
-	//AL("8^380 key="+key+"  value="+value);
+	//TODO put a blue mark here	
+	//AL("8^385 gl.font2Use="+gl.font2Use+" key="+key+"  value="+value);
 	switch(key){
 		case "index":
 			gl.fontIndex=value;
-			//AL("8^385 see gl.fontIndex="+gl.fontIndex);
+			//AL("8^389 see gl.fontIndex="+gl.fontIndex);
 			break;
 		case "A":
 			gl.fontAs[gl.font2Use][gl.fontIndex]=value;
-			//AL("8^385 see As["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontAs[gl.font2Use][gl.fontIndex]);
+			//AL("8^393 see As["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontAs[gl.font2Use][gl.fontIndex]);
 			break;
 		case "B":
 			gl.fontBs[gl.font2Use][gl.fontIndex]=value;
-			//AL("8^389 see Bs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontBs[gl.font2Use][gl.fontIndex]);
+			//AL("8^397 see Bs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontBs[gl.font2Use][gl.fontIndex]);
 			break;
 		case "C":
 			gl.fontCs[gl.font2Use][gl.fontIndex]=value;
-			//AL("8^393 see Cs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontCs[gl.font2Use][gl.fontIndex]);
+			//AL("8^401 see Cs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontCs[gl.font2Use][gl.fontIndex]);
 			break;
 		case "X":
 			gl.fontXs[gl.font2Use][gl.fontIndex]=value;
-			//AL("8^397 see Xs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontXs[gl.font2Use][gl.fontIndex]);
+			//AL("8^405 see Xs["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontXs[gl.font2Use][gl.fontIndex]);
 			break;
 		case "Y":
 			gl.fontYs[gl.font2Use][gl.fontIndex]=value;
-			//AL("8^401 see Ys["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontYs[gl.font2Use][gl.fontIndex]);
+			//AL("8^409 see Ys["+gl.font2Use+"]["+gl.fontIndex+"]="+gl.fontYs[gl.font2Use][gl.fontIndex]);
+			gl.fontXls[gl.font2Use][gl.fontIndex]=gl.fontXs[gl.font2Use][gl.fontIndex]/(gl.fontTextureSizes[gl.font2Use]-1);
+			gl.fontXrs[gl.font2Use][gl.fontIndex]=
+				(    gl.fontXs[gl.font2Use][gl.fontIndex]
+				 +(0>gl.fontAs[gl.font2Use][gl.fontIndex]?0:gl.fontAs[gl.font2Use][gl.fontIndex])
+				 +   gl.fontBs[gl.font2Use][gl.fontIndex]
+				 +(0>gl.fontCs[gl.font2Use][gl.fontIndex]?0:gl.fontCs[gl.font2Use][gl.fontIndex])
+				 -0.5
+				)
+				/(gl.fontTextureSizes[gl.font2Use]-1)
+			;
+			gl.fontYls[gl.font2Use][gl.fontIndex]=(gl.fontYs[gl.font2Use][gl.fontIndex]                            -gl.fontDescent[gl.font2Use])/(gl.fontTextureSizes[gl.font2Use]-1);
+			gl.fontYus[gl.font2Use][gl.fontIndex]=(gl.fontYs[gl.font2Use][gl.fontIndex]+gl.fontHeight [gl.font2Use]-gl.fontDescent[gl.font2Use])/(gl.fontTextureSizes[gl.font2Use]-1);
+			/**/AL(sprintf(
+			/**/	"8^428 %s %d %d %5.3f %5.3f %5.3f %5.3f" 
+			/**/	,String.fromCharCode(gl.fontIndex)
+			/**/	,gl.font2Use
+			/**/	,gl.fontIndex
+			/**/	,gl.fontXls[gl.font2Use][gl.fontIndex]
+			/**/	,gl.fontXrs[gl.font2Use][gl.fontIndex]
+			/**/	,gl.fontYls[gl.font2Use][gl.fontIndex]
+			/**/	,gl.fontYus[gl.font2Use][gl.fontIndex]
+			/**/	)
+			/**/);
 			break;
 		case "FontName":
 			gl.fontNames[gl.font2Use]=value;
-			//AL("8^405 see gl.fonttName      ["+gl.font2Use+"]="+gl.fontNames[gl.font2Use]);
+			//AL("8^413 see gl.fonttName      ["+gl.font2Use+"]="+gl.fontNames[gl.font2Use]);
 			break;
 		case "textureSize":
 			gl.fontTextureSizes[gl.font2Use]=value;
-			//AL("8^409 see gl.fontTextureSize["+gl.font2Use+"]="+gl.fontTextureSizes[gl.font2Use]);
+			//AL("8^417 see gl.fontTextureSize["+gl.font2Use+"]="+gl.fontTextureSizes[gl.font2Use]);
 			break;
 		case "charSet":
 			gl.fontCharSet[gl.font2Use]=value;
-			//AL("8^413 see gl.fontCharSet    ["+gl.font2Use+"]="+gl.fontCharSet[gl.font2Use]);
+			//AL("8^421 see gl.fontCharSet    ["+gl.font2Use+"]="+gl.fontCharSet[gl.font2Use]);
 			break;
 		case "widthType":
 			gl.fontWidthType[gl.font2Use]=value; /* fixed or variable */
-			//AL("8^417 see gl.fontWidthType  ["+gl.font2Use+"]="+gl.fontWidthType[gl.font2Use]);
+			//AL("8^425 see gl.fontWidthType  ["+gl.font2Use+"]="+gl.fontWidthType[gl.font2Use]);
 			break;
 		case "weight":
 			gl.fontWeight[gl.font2Use]=value;
-			//AL("8^421 see gl.fontWeight     ["+gl.font2Use+"]="+gl.fontWeight[gl.font2Use]);
+			//AL("8^429 see gl.fontWeight     ["+gl.font2Use+"]="+gl.fontWeight[gl.font2Use]);
 			break;
 		case "height":
 			gl.fontHeight[gl.font2Use]=value;
-			//AL("8^425 see gl.fontHeight     ["+gl.font2Use+"]="+gl.fontHeight[gl.font2Use]);
+			//AL("8^433 see gl.fontHeight     ["+gl.font2Use+"]="+gl.fontHeight[gl.font2Use]);
 			break;
 		case "descent":
 			gl.fontDescent[gl.font2Use]=value;
-			//AL("8^429 see gl.fontDescent    ["+gl.font2Use+"]="+gl.fontDescent[gl.font2Use]);
+			//AL("8^437 see gl.fontDescent    ["+gl.font2Use+"]="+gl.fontDescent[gl.font2Use]);
 			break;
 		default:
 			//AL("default key="+key+" value="+value);
@@ -603,63 +632,91 @@ function genCube(at) {
 		-1, 0, 0,
 		-1, 0, 0,
 	]; 
+	letters="YjbM";
+	
 	uvs=[
-		0,1,
-		0,0,
-		1,1,
-		1,0,
-		
-		0,1,
-		0,0,
-		1,1,
-		1,0,
-		
-		0,1,
-		0,0,
-		1,1,
-		1,0,
-		
-		0,1,
-		0,0,
-		1,1,
-		1,0,
-	]; 
+	gl.fontXls[gl.font2Use][letters.charCodeAt(0)],gl.fontYus[gl.font2Use][letters.charCodeAt(0)],
+	gl.fontXls[gl.font2Use][letters.charCodeAt(0)],gl.fontYls[gl.font2Use][letters.charCodeAt(0)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(0)],gl.fontYus[gl.font2Use][letters.charCodeAt(0)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(0)],gl.fontYls[gl.font2Use][letters.charCodeAt(0)],
+	
+	gl.fontXls[gl.font2Use][letters.charCodeAt(1)],gl.fontYus[gl.font2Use][letters.charCodeAt(1)],
+	gl.fontXls[gl.font2Use][letters.charCodeAt(1)],gl.fontYls[gl.font2Use][letters.charCodeAt(1)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(1)],gl.fontYus[gl.font2Use][letters.charCodeAt(1)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(1)],gl.fontYls[gl.font2Use][letters.charCodeAt(1)],
+	
+	gl.fontXls[gl.font2Use][letters.charCodeAt(2)],gl.fontYus[gl.font2Use][letters.charCodeAt(2)],
+	gl.fontXls[gl.font2Use][letters.charCodeAt(2)],gl.fontYls[gl.font2Use][letters.charCodeAt(2)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(2)],gl.fontYus[gl.font2Use][letters.charCodeAt(2)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(2)],gl.fontYls[gl.font2Use][letters.charCodeAt(2)],
+	
+	gl.fontXls[gl.font2Use][letters.charCodeAt(3)],gl.fontYus[gl.font2Use][letters.charCodeAt(3)],
+	gl.fontXls[gl.font2Use][letters.charCodeAt(3)],gl.fontYls[gl.font2Use][letters.charCodeAt(3)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(3)],gl.fontYus[gl.font2Use][letters.charCodeAt(3)],
+	gl.fontXrs[gl.font2Use][letters.charCodeAt(3)],gl.fontYls[gl.font2Use][letters.charCodeAt(3)]
+
+	];
+	
+//	uvs=[
+//		0,1,
+//		0,0,
+//		1,1,
+//		1,0,
+//		
+//		0,1,
+//		0,0,
+//		1,1,
+//		1,0,
+//		
+//		0,1,
+//		0,0,
+//		1,1,
+//		1,0,
+//		
+//		0,1,
+//		0,0,
+//		1,1,
+//		1,0,
+//	];
+//	for(var ii=0;ii<uvs.length;ii++){
+//		uvs[ii]=.5+ (uvs[ii]*.2);
+//	}
+	
+	
 	indices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 	//indices = [0,1,2,3];
 	for(var ii=0;ii<xyzs.length;ii++){
-		xyzs[ii]*=5.;
+		xyzs[ii]*=10.;
 	}
-	for(var ii=0;ii<uvs.length;ii++){
-		uvs[ii]=.5+ (uvs[ii]*.2);
-	}
+	
 	//TODO put a blue mark here	
 	                                   gl[at].cubeXYZs = gl[at].createBuffer();
 	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].cubeXYZs); /* not an array of indices, so not an ELEMENT_ARRAY_BUFFER */
 	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(xyzs), gl.STATIC_DRAW);
 	gl[at].cubeXYZs.itemSize = 3;
 	gl[at].cubeXYZs.numItems = xyzs.length / gl[at].cubeXYZs.itemSize;
-	/**/if(0==at)AL("gl["+at+"].cubeXYZs.numItems="+gl[at].cubeXYZs.numItems);
+	//if(0==at)AL("gl["+at+"].cubeXYZs.numItems="+gl[at].cubeXYZs.numItems);
 	
 	                                   gl[at].cubeNormals = gl[at].createBuffer();
 	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].cubeNormals);/* not an array of indices, so not an ELEMENT_ARRAY_BUFFER */
 	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
 	gl[at].cubeNormals.itemSize = 3;
 	gl[at].cubeNormals.numItems = normals.length / gl[at].cubeNormals.itemSize;
-	/**/if(0==at)AL("gl["+at+"].cubeNormals.numItems="+gl[at].cubeNormals.numItems);
+	//if(0==at)AL("gl["+at+"].cubeNormals.numItems="+gl[at].cubeNormals.numItems);
 	
 	                                   gl[at].cubeTextureCoords = gl[at].createBuffer();
 	gl[at].bindBuffer(gl.ARRAY_BUFFER, gl[at].cubeTextureCoords); /* not an array of indices, so not an ELEMENT_ARRAY_BUFFER */
 	gl[at].bufferData(gl.ARRAY_BUFFER, new Float32Array(uvs), gl.STATIC_DRAW);
 	gl[at].cubeTextureCoords.itemSize = 2;
 	gl[at].cubeTextureCoords.numItems = uvs.length / gl[at].cubeTextureCoords.itemSize;
-	/**/if(0==at)AL("gl["+at+"].cubeTexutreCoords.numItems="+gl[at].cubeTextureCoords.numItems);
+	//if(0==at)AL("gl["+at+"].cubeTexutreCoords.numItems="+gl[at].cubeTextureCoords.numItems);
 	
 	                                           gl[at].cubeIndices = gl[at].createBuffer();
 	gl[at].bindBuffer(gl.ELEMENT_ARRAY_BUFFER, gl[at].cubeIndices);
 	gl[at].bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
 	gl[at].cubeIndices.itemSize = 1;
 	gl[at].cubeIndices.numItems = indices.length / gl[at].cubeIndices.itemSize;
-	/**/if(0==at)AL("gl["+at+"].cubeIndices.numItems="+gl[at].cubeIndices.numItems);
+	//if(0==at)AL("gl["+at+"].cubeIndices.numItems="+gl[at].cubeIndices.numItems);
 }
 function genSquares() {
 	/* Generate the squares which will act as the first placement locaitons for the letters */
@@ -865,7 +922,7 @@ function drawScene08() {
 	if(null!=elem)elem.innerHTML=sprintf(" step=%8.3f &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; turn=pi/%d",gl[gl.at].deltaMove,gl[gl.at].deltaTurnPiOver);
 
 }
-//TODO put a blue mark here
+//TO DO put a blue mark here
 function animate() {
 	var timeNow = new Date().getTime();
 	if (gl.lastTime08 != 0) {
