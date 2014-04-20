@@ -36,16 +36,16 @@ public class WebGLTutorialsServlet extends HttpServlet {
 		int numHandeled=0;
 		boolean ajaxLogging=false;
 		String key= "2log";
-        if(paramMap.containsKey(key)){
-            numHandeled++;
-            String[] paramValues = req.getParameterValues(key);
-            //int counter=0;
-            for(String s:paramValues){
-        		//logger.info(String.format("%2d %s",counter++,s));
-        		logger.info(s);
-            }
-            ajaxLogging=true;
-        }
+		if(paramMap.containsKey(key)){
+			numHandeled++;
+			String[] paramValues = req.getParameterValues(key);
+			//int counter=0;
+			for(String s:paramValues){
+				//logger.info(String.format("%2d %s",counter++,s));
+				logger.info(s);
+			}
+			ajaxLogging=true;
+		}
 		if(0==paramMap.size()){
 			//logger.info("no params");
 		}

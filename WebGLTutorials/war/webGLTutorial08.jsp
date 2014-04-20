@@ -149,51 +149,22 @@
 		}
 	}
 </script>
- <!-- 
-			<script id="vertex-shader5" type="text/webgl">
-			/* perspective,   no colors or materials,  passes textures */
-				attribute vec3 aVertexPosition;
-				attribute vec2 aTextureCoord;
-				
-				uniform mat4 uMVMatrix;
-				uniform mat4 uPMatrix;
-				
-				varying vec2 vTextureCoord;
-				
-				void main(void) {
-					gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
-					vTextureCoord = aTextureCoord;
-				}
-			</script>
-			<script id="fragment-shader4" type="text/webgl">
-			/* gl_FragColor comes from 2D texture */
-				#ifdef GL_ES
-					precision highp float;
-				#endif
-				
-				varying vec2 vTextureCoord;
-				
-				uniform sampler2D uSampler;
-				
-				void main(void) {
-					gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));
-				}
-			</script>
--->
 </head>
 <body onload="webGLStart08();" style="overflow: auto; overflow-x: hidden;">
 <p id="breadcrumbs">
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorials">WebGLTutorials</a> -&gt; WebGLTutorial08
 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial08"> forward to Tutorial09 (will error, not yet written) </a>
-&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial06"> backward to Tutorial07 </a>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial09"> forward to Tutorial09 (will error, not yet written) </a>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<a href="WebGLTutorial07"> backward to Tutorial07 </a>
 
 </p>
-<h2>Tutorial08 &nbsp; Text</h2>
-<canvas id="tutorial08-canvas0" tabindex="0" width="500" height="500" style="border:none; position:absolute; left: 40px; top:80px;"></canvas>
-<canvas id="tutorial08-canvas1" tabindex="1" width="500" height="500" style="border:none; position:absolute; left:552px; top:80px;"></canvas>
+<p id="header">
+Tutorial08 &nbsp; Text
+</p>
+<canvas id="tutorial08-canvas0" tabindex="0" width="500" height="500" style="border:none; position:absolute; left: 40px; top:50px;"></canvas>
+<canvas id="tutorial08-canvas1" tabindex="1" width="500" height="500" style="border:none; position:absolute; left:552px; top:50px;"></canvas>
 <div id="loadingtext">Loading world...</div>
-<div id="tutorial08Tabs"> 
+<div id="tutorial08Tabs" style="position:relative; top:481px;"> 
 	<ul>
 		<li><a href="#idTab080">Textures</a></li>  
 		<li><a href="#idTab081">ViewPoint Movement</a></li> 
@@ -205,16 +176,17 @@
 		<div style="position:relative; left:-10px; top:0px; width:150px;"> <!-- this first div is the span setter, so needs to be relative -->
 			<label><Input type = radio Name = radioTextures id="tex00" >None</label><br>
 			<label><Input type = radio Name = radioTextures id="tex01" >Galvanized</label><br>
-			<label><Input type = radio Name = radioTextures id="tex02" checked="checked">Earth</label><br>
+			<label><Input type = radio Name = radioTextures id="tex02" >Earth</label><br>
 			<label><Input type = radio Name = radioTextures id="tex03" >NeHe</label><br>
 			<label><Input type = radio Name = radioTextures id="tex04" >glass</label><br>
-			<label><Input type = radio Name = radioTextures id="tex05" >Alphabet</label><br>
+			<label><Input type = radio Name = radioTextures id="tex05" checked="checked">Alphabet</label><br>
+			<label><Input type = radio Name = radioTextures id="tex06" >Text</label><br>
 		</div>
 		<div style="position:absolute; left:130px; top:60px; width:650px;"> <!-- In order to not have things cascade lower and lower, go absolute -->
 			<label><Input type = radio Name = radioShape id="shape00" >Teapot</label><br>
-			<label><Input type = radio Name = radioShape id="shape01" checked="checked">Sphere</label><br>
-			<!-- <label><Input type = radio Name = radioShape id="shape02" >Cube</label><br>
-			<label><Input type = radio Name = radioShape id="shape03" >IcosaHedron</label><br>
+			<label><Input type = radio Name = radioShape id="shape01" >Sphere</label><br>
+			<label><Input type = radio Name = radioShape id="shape02" checked="checked">Cube</label><br>
+			<!-- <label><Input type = radio Name = radioShape id="shape03" >IcosaHedron</label><br>
 			 -->
 		</div>
 		<div style="position:absolute; left:230px; top:80px; width:550px;"> <!-- In order to not have things cascade lower and lower, go absolute -->

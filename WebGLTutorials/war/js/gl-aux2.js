@@ -7,8 +7,6 @@ var deg2Rad=1/rad2Deg;
 var piOver2 = Math.PI/2;
 gl.shiftKeyDown=false;
 
-
-
 /* the modelview matrix was reverse engineered as meaning    positions are from 0,0,0 to present location
 -leftX          +roofX         -ForwardX         NotFiguredOutButHasToDoWithScale
 -leftY          +roofY         -ForwardY         NotFiguredOutButHasToDoWithScale
@@ -40,7 +38,31 @@ function initGL(canvas) {
 			for(var ii=0;ii<12;ii++){
 				gl.striker[ii]=vec3.create();
 			}
-			//AL("initGL initial setting gl.at="+gl.at);
+			//AL("initGL pre setting post font set gl.at="+gl.at);
+			gl.fontNames       = [];
+			gl.fontTextureSizes= [];
+			gl.fontCharSet     = [];
+			gl.fontWidthType   = [];
+			gl.fontWidthType   = [];
+			gl.fontWeight      = [];
+			gl.fontHeight      = [];
+			gl.fontDescent     = [];
+			gl.fontAs = [];
+			gl.fontBs = [];
+			gl.fontCs = [];
+			gl.fontXs = [];
+			gl.fontYs = [];
+			gl.font2Use=0;
+			gl.fontIndex=0;
+			//AL("initGL pre2 setting post font set gl.at="+gl.at);
+			for(var ii=0;ii<4;ii++){
+				gl.fontAs[ii]= [];
+				gl.fontBs[ii]= [];
+				gl.fontCs[ii]= [];
+				gl.fontXs[ii]= [];
+				gl.fontYs[ii]= [];
+			}
+			//AL("initGL initial setting post font set gl.at="+gl.at);
 		} //else {
 			//AL("initGL gl.length="+gl.length);
 		//}
@@ -1173,14 +1195,15 @@ function setGLMaterialParms(at,
 	gl[at].materialEmissiveRGB=vec3.createFrom(0.,0.,0.);
 }
 function jsonReviverVarList(key, value) {
+	//AL("check");
 	if(  (typeof(value) === 'object')
 	   &&(0<key.length)
 	  ){
 		AL(sprintf("%5d jsonVarList %s",gl.counter,key));
 		gl.counter=-1;
 	}
-/**/	if(8000<gl.counter)	AL("jprlv "+typeof(key)+" "+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
-/**/	if(typeof(value) === 'object')AL("OBJECT "+key.length+" typeof(key)="+typeof(key)+" typeof(value)="+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
+//	if(8000<gl.counter)	AL("jprlv "+typeof(key)+" "+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
+//	if(typeof(value) === 'object')AL("OBJECT "+key.length+" typeof(key)="+typeof(key)+" typeof(value)="+typeof(value)+" "+gl.counter+" key="+key+" value="+value);
 	gl.counter++;
 	return value;
 }

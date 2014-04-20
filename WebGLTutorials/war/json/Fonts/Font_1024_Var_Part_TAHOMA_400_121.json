@@ -1,5 +1,6 @@
 {"FontName":"TAHOMA","textureSize":1024,"charSet":"Part","widthType":"Variable","weight":400,"height":146,"descent":25
-,"chars":[{"index": 32,"A":  0,"B":  1,"C": 37,"X":   0,"Y": 902}
+,"chars":[
+ {"index": 32,"A":  0,"B":  1,"C": 37,"X":   0,"Y": 902}
 ,{"index": 33,"A": 13,"B": 14,"C": 13,"X":  38,"Y": 902}
 ,{"index": 34,"A":  7,"B": 35,"C":  7,"X":  78,"Y": 902}
 ,{"index": 35,"A":  8,"B": 72,"C":  8,"X": 127,"Y": 902}
