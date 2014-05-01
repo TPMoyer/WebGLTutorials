@@ -425,17 +425,17 @@ function jsonTextReviver(key, value) {
 			;
 			gl.fontYls[gl.font2Use][gl.fontIndex]=(gl.fontYs[gl.font2Use][gl.fontIndex]                            -gl.fontDescent[gl.font2Use])/(gl.fontTextureSizes[gl.font2Use]-1);
 			gl.fontYus[gl.font2Use][gl.fontIndex]=(gl.fontYs[gl.font2Use][gl.fontIndex]+gl.fontHeight [gl.font2Use]-gl.fontDescent[gl.font2Use])/(gl.fontTextureSizes[gl.font2Use]-1);
-			/**/AL(sprintf(
-			/**/	"8^428 %s %d %d %5.3f %5.3f %5.3f %5.3f" 
-			/**/	,String.fromCharCode(gl.fontIndex)
-			/**/	,gl.font2Use
-			/**/	,gl.fontIndex
-			/**/	,gl.fontXls[gl.font2Use][gl.fontIndex]
-			/**/	,gl.fontXrs[gl.font2Use][gl.fontIndex]
-			/**/	,gl.fontYls[gl.font2Use][gl.fontIndex]
-			/**/	,gl.fontYus[gl.font2Use][gl.fontIndex]
-			/**/	)
-			/**/);
+			//AL(sprintf(
+			//	"8^428 %s %d %d %5.3f %5.3f %5.3f %5.3f" 
+			//	,String.fromCharCode(gl.fontIndex)
+			//	,gl.font2Use
+			//	,gl.fontIndex
+			//	,gl.fontXls[gl.font2Use][gl.fontIndex]
+			//	,gl.fontXrs[gl.font2Use][gl.fontIndex]
+			//	,gl.fontYls[gl.font2Use][gl.fontIndex]
+			//	,gl.fontYus[gl.font2Use][gl.fontIndex]
+			//	)
+			//);
 			break;
 		case "FontName":
 			gl.fontNames[gl.font2Use]=value;
